@@ -9,7 +9,7 @@ module MySQLSpec
   MYSQL_DB_URL        = "mysql://root@localhost/"
   MYSQL_DB_CONNECTION = "#{MYSQL_DB_URL}#{MYSQL_DB_NAME}"
 
-  class MySQLModel < KemalRestApi::Adapters::CrystalDbModel
+  class MySQLModel < KemalJsonApi::Adapters::CrystalDbModel
     def initialize
       super MYSQL_DB_CONNECTION, prepare
       # Insert some data
@@ -46,12 +46,12 @@ module MySQLSpec
     end
   end
 
-  res = KemalRestApi::Resource.new MySQLModel.new
+  res = KemalJsonApi::Resource.new MySQLModel.new
 
-  describe KemalRestApi do
+  describe KemalJsonApi do
     Spec.before_each do
       Kemal::RouteHandler::INSTANCE.routes = Radix::Tree(Kemal::Route).new
-      res = KemalRestApi::Resource.new MySQLModel.new, KemalRestApi::ALL_ACTIONS, singular: "item"
+      res = KemalJsonApi::Resource.new MySQLModel.new, KemalJsonApi::ALL_ACTIONS, singular: "item"
       res.generate_routes!
     end
 

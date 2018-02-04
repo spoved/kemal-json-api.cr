@@ -1,6 +1,6 @@
 require "../resource"
 
-module KemalRestApi::Adapters
+module KemalJsonApi::Adapters
   abstract class CrystalDbModel < Model
     def initialize(@db_connection : String, @table_name : String)
     end

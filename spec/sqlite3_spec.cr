@@ -8,7 +8,7 @@ module SQLite3Spec
   SQLITE3_DB_CONNECTION = "sqlite3:#{SQLITE3_DB_FILE}"
   SQLITE3_DB_TABLE      = "Test"
 
-  class Sqlite3Model < KemalRestApi::Adapters::CrystalDbModel
+  class Sqlite3Model < KemalJsonApi::Adapters::CrystalDbModel
     def initialize
       super SQLITE3_DB_CONNECTION, create_table
       # Insert some data
@@ -32,12 +32,12 @@ module SQLite3Spec
     end
   end
 
-  res = KemalRestApi::Resource.new Sqlite3Model.new
+  res = KemalJsonApi::Resource.new Sqlite3Model.new
 
-  describe KemalRestApi do
+  describe KemalJsonApi do
     Spec.before_each do
       Kemal::RouteHandler::INSTANCE.routes = Radix::Tree(Kemal::Route).new
-      res = KemalRestApi::Resource.new Sqlite3Model.new, KemalRestApi::ALL_ACTIONS, singular: "item"
+      res = KemalJsonApi::Resource.new Sqlite3Model.new, KemalJsonApi::ALL_ACTIONS, singular: "item"
       res.generate_routes!
     end
 

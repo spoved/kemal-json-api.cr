@@ -1,6 +1,6 @@
 require "kemal"
 
-module KemalRestApi
+module KemalJsonApi
   class Resource
     def generate_routes!
       @resources.each do |resource|

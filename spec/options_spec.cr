@@ -1,7 +1,7 @@
 require "./spec_helper"
 
 module OptionsSpec
-  class NoDbModel < KemalRestApi::Model
+  class NoDbModel < KemalJsonApi::Model
     def prepare_params(env : HTTP::Server::Context, *, json = true) : Hash(String, String)
       Hash(String, String).new
     end
@@ -31,12 +31,12 @@ module OptionsSpec
     end
   end
 
-  res = KemalRestApi::Resource.new NoDbModel.new
+  res = KemalJsonApi::Resource.new NoDbModel.new
 
-  describe KemalRestApi do
+  describe KemalJsonApi do
     Spec.before_each do
       Kemal::RouteHandler::INSTANCE.routes = Radix::Tree(Kemal::Route).new
-      res = KemalRestApi::Resource.new NoDbModel.new, KemalRestApi::ALL_ACTIONS, prefix: "api/v1", singular: "item", plural: "objects"
+      res = KemalJsonApi::Resource.new NoDbModel.new, KemalJsonApi::ALL_ACTIONS, prefix: "api/v1", singular: "item", plural: "objects"
       res.generate_routes!
     end
 

@@ -7,8 +7,8 @@ dependencies:
     github: crystal-lang/crystal-db
   kemal:
     github: kemalcr/kemal
-  kemal-rest-api:
-    github: blocknotes/kemal-rest-api
+  kemal-json-api:
+    github: spoved/kemal-json-api
   sqlite3:
     github: crystal-lang/crystal-sqlite3
   mysql:

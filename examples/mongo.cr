@@ -39,7 +39,7 @@ class MongoHelper
   end
 end
 
-class MongoModel < KemalRestApi::Model
+class MongoModel < KemalJsonApi::Model
   DB_NAME       = "test"
   DB_COLLECTION = "coll"
   DB_CONNECTION = "mongodb://localhost/#{DB_NAME}"
@@ -134,7 +134,7 @@ class MongoModel < KemalRestApi::Model
 end
 
 module WebApp
-  res = KemalRestApi::Resource.new MongoModel.new, KemalRestApi::ALL_ACTIONS, singular: "item"
+  res = KemalJsonApi::Resource.new MongoModel.new, KemalJsonApi::ALL_ACTIONS, singular: "item"
   res.generate_routes!
   Kemal.run
 end

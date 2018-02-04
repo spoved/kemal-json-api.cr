@@ -1,4 +1,4 @@
-module KemalRestApi
+module KemalJsonApi
   enum ActionMethod
     CREATE
     READ

@@ -1,7 +1,7 @@
 require "kemal"
 require "../src/*"
 
-class MyModel < KemalRestApi::Model
+class MyModel < KemalJsonApi::Model
   def prepare_params(env : HTTP::Server::Context, *, json = true) : Hash(String, String)
     Hash(String, String).new
   end
@@ -32,7 +32,7 @@ class MyModel < KemalRestApi::Model
 end
 
 module WebApp
-  res = KemalRestApi::Resource.new MyModel.new, KemalRestApi::ALL_ACTIONS, prefix: "api", singular: "item"
+  res = KemalJsonApi::Resource.new MyModel.new, KemalJsonApi::ALL_ACTIONS, prefix: "api", singular: "item"
   res.generate_routes!
   Kemal.run
 end

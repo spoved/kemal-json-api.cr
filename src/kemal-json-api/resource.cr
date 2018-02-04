@@ -1,6 +1,6 @@
 require "./action"
 
-module KemalRestApi
+module KemalJsonApi
   abstract class Model
     # actions
     abstract def create(args : Hash(String, String)) : Int | Nil

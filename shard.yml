@@ -19,6 +19,6 @@ development_dependencies:
   spec-kemal:
     github: kemalcr/spec-kemal
 
-crystal: 0.23.1
+crystal: 0.24.1
 
 license: MIT

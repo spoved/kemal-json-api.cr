@@ -1,3 +1,3 @@
-module KemalRestApi
+module KemalJsonApi
   VERSION = "0.1.0"
 end

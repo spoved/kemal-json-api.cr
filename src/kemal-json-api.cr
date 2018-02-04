@@ -1,8 +1,8 @@
 require "kemal"
-require "./kemal-rest-api/*"
-require "./kemal-rest-api/adapters/*"
+require "./kemal-json-api/*"
+require "./kemal-json-api/adapters/*"
 
-module KemalRestApi
+module KemalJsonApi
   DEBUG = false
 
   ALL_ACTIONS = {} of ActionMethod => ActionType

@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------------- #
-# kemal-rest-api basic example
+# kemal-json-api basic example
 # --------------------------------------------------------------------------- #
 require "db"
 require "mysql"
@@ -20,27 +20,27 @@ def create_table1
   table
 end
 
-class MyModel < KemalRestApi::Adapters::CrystalDbModel
+class MyModel < KemalJsonApi::Adapters::CrystalDbModel
   def initialize
     super DB_CONNECTION, create_table1
   end
 end
 
 # # Simple:
-# KemalRestApi::Resource.new MyModel.new
+# KemalJsonApi::Resource.new MyModel.new
 
 # # Change some options:
-# KemalRestApi::Resource.new MyModel.new, KemalRestApi::ALL_ACTIONS, singular: "item"
+# KemalJsonApi::Resource.new MyModel.new, KemalJsonApi::ALL_ACTIONS, singular: "item"
 
 # # Setup only specific routes:
-# KemalRestApi::Resource.new MyModel.new, {
-#   KemalRestApi::ActionMethod::READ => KemalRestApi::ActionType::GET,
-#   KemalRestApi::ActionMethod::LIST => KemalRestApi::ActionType::GET,
-#   KemalRestApi::ActionMethod::UPDATE => KemalRestApi::ActionType::PATCH,
+# KemalJsonApi::Resource.new MyModel.new, {
+#   KemalJsonApi::ActionMethod::READ => KemalJsonApi::ActionType::GET,
+#   KemalJsonApi::ActionMethod::LIST => KemalJsonApi::ActionType::GET,
+#   KemalJsonApi::ActionMethod::UPDATE => KemalJsonApi::ActionType::PATCH,
 # }, singular: "test"
 
 module WebApp
-  res = KemalRestApi::Resource.new MyModel.new, KemalRestApi::ALL_ACTIONS, singular: "item"
+  res = KemalJsonApi::Resource.new MyModel.new, KemalJsonApi::ALL_ACTIONS, singular: "item"
 
   # Routes
   get "/" do |env|
