@@ -1,0 +1,24 @@
+name: kemal-json-api
+version: 0.0.1
+
+authors:
+  - Holden Omans <holden.omans@gmail.com>
+  - Mattia Roccoberton <mat@blocknot.es>
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+
+development_dependencies:
+  db:
+    github: crystal-lang/crystal-db
+  sqlite3:
+    github: crystal-lang/crystal-sqlite3
+  mysql:
+    github: crystal-lang/crystal-mysql
+  spec-kemal:
+    github: kemalcr/spec-kemal
+
+crystal: 0.23.1
+
+license: MIT

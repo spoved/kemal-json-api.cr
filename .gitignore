@@ -1,0 +1,16 @@
+/doc/
+/libs/
+/lib/
+/bin/
+/.shards/
+
+*.lock
+*.sqlite3
+
+# Libraries don't need dependency lock
+# Dependencies will be locked in application that uses them
+/shard.lock
+/examples/.shards
+/examples/lib
+
+/_misc
