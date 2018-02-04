@@ -1,6 +1,8 @@
 require "kemal"
 require "./kemal-json-api/*"
 require "./kemal-json-api/adapters/*"
+require "./kemal-json-api/models/*"
+require "./kemal-json-api/resources/*"
 
 module KemalJsonApi
   DEBUG = false
