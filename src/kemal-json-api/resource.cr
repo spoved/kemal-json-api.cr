@@ -51,20 +51,29 @@ module KemalJsonApi
       ret = model.read id
       ret.to_json
 
-      ret = model.read id
-      json = JSON.parse(ret.to_json).as_h
-      json.delete("id") if json.key? id
+      begin
+        ret = model.read id
+        json = JSON.parse(ret.to_json).as_h
+        json.delete("id") if json.key? id
 
-      {
-        links: {
-          self: "/#{plural}/#{id}",
-        },
-        data: {
-          type:       plural,
-          id:         id,
-          attributes: json,
-        },
-      }.to_json
+        {
+          links: {
+            self: "/#{plural}/#{id}",
+          },
+          data: {
+            type:       plural,
+            id:         id,
+            attributes: json,
+          },
+        }.to_json
+      rescue
+        {
+          links: {
+            self: "/#{plural}/#{id}",
+          },
+          data: nil,
+        }.to_json
+      end
     end
 
     protected def setup_actions!(actions = {} of Action::Method => Action::MethodType)
