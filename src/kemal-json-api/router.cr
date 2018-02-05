@@ -13,7 +13,7 @@ module KemalJsonApi
             block = ->(env : HTTP::Server::Context) do
               # TODO: let pass only valid fields
               ret = resource.model.create resource.model.prepare_params(env, json: @option_json)
-              env.response.content_type = "application/json"
+              env.response.content_type = "application/vnd.api+json"
               env.response.headers["Connection"] = "close"
               if ret && ret > 0
                 env.response.status_code = 201
@@ -27,11 +27,11 @@ module KemalJsonApi
             path = "/#{resource.plural}/:id"
             block = ->(env : HTTP::Server::Context) do
               id = env.params.url["id"]
-              ret = resource.model.read id
+              ret = resource.read id
               env.response.status_code = ret ? 200 : 404
-              env.response.content_type = "application/json"
+              env.response.content_type = "application/vnd.api+json"
               env.response.headers["Connection"] = "close"
-              ret.to_json
+              ret
             end
           when ActionMethod::UPDATE
             path = "/#{resource.plural}/:id"
@@ -39,7 +39,7 @@ module KemalJsonApi
               id = env.params.url["id"]
               # TODO: let pass only valid fields
               ret = resource.model.update id, resource.model.prepare_params(env, json: @option_json)
-              env.response.content_type = "application/json"
+              env.response.content_type = "application/vnd.api+json"
               env.response.headers["Connection"] = "close"
               if ret.nil?
                 env.response.status_code = 404
@@ -58,7 +58,7 @@ module KemalJsonApi
               id = env.params.url["id"]
               ret = resource.model.delete id
               env.response.status_code = ret ? 200 : 404
-              env.response.content_type = "application/json"
+              env.response.content_type = "application/vnd.api+json"
               env.response.headers["Connection"] = "close"
               if ret
                 env.response.status_code = 200
@@ -73,7 +73,7 @@ module KemalJsonApi
             block = ->(env : HTTP::Server::Context) do
               ret = resource.model.list.to_json
               env.response.status_code = 200
-              env.response.content_type = "application/json"
+              env.response.content_type = "application/vnd.api+json"
               env.response.headers["Connection"] = "close"
               ret
             end

@@ -47,6 +47,26 @@ module KemalJsonApi
       end
     end
 
+    def read(id : String) : String
+      ret = model.read id
+      ret.to_json
+
+      ret = model.read id
+      json = JSON.parse(ret.to_json).as_h
+      json.delete("id") if json.key? id
+
+      {
+        links: {
+          self: "/#{plural}/#{id}",
+        },
+        data: {
+          type:       plural,
+          id:         id,
+          attributes: json,
+        },
+      }.to_json
+    end
+
     protected def setup_actions!(actions = {} of Action::Method => Action::MethodType)
       if !actions || actions.empty?
         @actions.push Action.new(ActionMethod::CREATE, ActionType::POST)

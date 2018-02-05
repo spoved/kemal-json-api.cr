@@ -12,5 +12,5 @@
 /shard.lock
 /examples/.shards
 /examples/lib
-
+/docs/
 /_misc

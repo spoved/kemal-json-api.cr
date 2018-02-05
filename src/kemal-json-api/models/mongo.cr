@@ -30,6 +30,7 @@ module KemalJsonApi
       ret
     end
 
+    # Returns the record identified by the provided id
     def read(id : Int | String)
       @mongodb.with_collection(@collection) do |coll|
         coll.find_one({"_id" => BSON::ObjectId.new(id)})
@@ -47,6 +48,7 @@ module KemalJsonApi
       ret
     end
 
+    # Deletes the record identified by the provided id
     def delete(id : Int | String)
       ret = false
       @mongodb.with_collection(@collection) do |coll|
@@ -60,7 +62,8 @@ module KemalJsonApi
       ret
     end
 
-    def list
+    # Returns a list of records
+    def list : Array
       results = [] of Hash(String, String)
       @mongodb.with_collection(@collection) do |coll|
         coll.find(BSON.new) do |doc|
