@@ -52,19 +52,12 @@ module KemalJsonApi
       ret.to_json
 
       begin
-        ret = model.read id
-        json = JSON.parse(ret.to_json).as_h
-        json.delete("id") if json.key? id
-
+        ret = model.read(id)
         {
           links: {
             self: "/#{plural}/#{id}",
           },
-          data: {
-            type:       plural,
-            id:         id,
-            attributes: json,
-          },
+          data: convert_to_json_api(id, ret),
         }.to_json
       rescue
         {
@@ -74,6 +67,32 @@ module KemalJsonApi
           data: nil,
         }.to_json
       end
+    end
+
+    def list
+      ret = [] of Hash(String, String) | Nil | JSON::Any
+      model.list.each do |value|
+        id = value.has_key?("_id") ? value["_id"].to_s.chomp('\u0000') : value["id"].to_s
+        ret.push convert_to_json_api(id, value)
+      end
+
+      {
+        links: {
+          self: "/#{plural}",
+        },
+        data: ret,
+      }.to_json
+    end
+
+    def convert_to_json_api(id : String, hash : Hash(String, String) | BSON | Nil)
+      return nil unless hash
+      json = JSON.parse(hash.to_json).as_h
+      json.delete_if { |key, value| key =~ /^(id|_id)$/ }
+      JSON.parse({
+        type:       plural,
+        id:         id,
+        attributes: json,
+      }.to_json)
     end
 
     protected def setup_actions!(actions = {} of Action::Method => Action::MethodType)

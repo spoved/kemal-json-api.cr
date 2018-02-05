@@ -71,7 +71,7 @@ module KemalJsonApi
           when ActionMethod::LIST
             path = "/#{resource.plural}"
             block = ->(env : HTTP::Server::Context) do
-              ret = resource.model.list.to_json
+              ret = resource.list
               env.response.status_code = 200
               env.response.content_type = "application/vnd.api+json"
               env.response.headers["Connection"] = "close"

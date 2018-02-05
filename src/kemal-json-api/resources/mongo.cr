@@ -18,31 +18,5 @@ module KemalJsonApi
       self.class.resources.push self
       setup_actions! actions
     end
-
-    def read(id : String) : String
-      begin
-        ret = model.read id
-        json = JSON.parse(ret.to_json).as_h
-        json.delete("_id")
-
-        {
-          links: {
-            self: "/#{plural}/#{id}",
-          },
-          data: {
-            type:       plural,
-            id:         id,
-            attributes: json,
-          },
-        }.to_json
-      rescue
-        {
-          links: {
-            self: "/#{plural}/#{id}",
-          },
-          data: nil,
-        }.to_json
-      end
-    end
   end
 end
