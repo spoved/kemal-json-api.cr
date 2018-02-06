@@ -1,7 +1,7 @@
 module KemalJsonApi
   abstract class Model
     # actions
-    abstract def create(args : Hash(String, String)) : Int | Nil
+    abstract def create(data : Hash(String, String) | Hash(String, JSON::Type)) : String | Nil
     abstract def read(id : Int | String) : Hash(String, String) | Nil
     abstract def update(id : Int | String, args : Hash(String, String)) : Int | Nil
     abstract def delete(id : Int | String) : Int | Nil

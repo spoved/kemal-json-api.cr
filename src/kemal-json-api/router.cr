@@ -12,12 +12,21 @@ module KemalJsonApi
             path = "/#{resource.plural}"
             block = ->(env : HTTP::Server::Context) do
               # TODO: let pass only valid fields
-              ret = resource.model.create resource.model.prepare_params(env, json: @option_json)
+              # puts env.inspect
+              data = resource.prepare_params(env)
+              if data.has_key?("data") && data["data"].as(Hash(String, JSON::Type)).has_key?("type")
+                args = data["data"].as(Hash(String, JSON::Type))
+                ret = resource.create args["attributes"].as(Hash(String, JSON::Type))
+                puts ret
+              else
+                ret = nil
+              end
+
               env.response.content_type = "application/vnd.api+json"
               env.response.headers["Connection"] = "close"
-              if ret && ret > 0
+              if ret && !ret.nil?
                 env.response.status_code = 201
-                {"status": "ok", "id": ret.to_s}.to_json
+                ret
               else
                 env.response.status_code = 400
                 {"status": "error", "message": "bad_request"}.to_json

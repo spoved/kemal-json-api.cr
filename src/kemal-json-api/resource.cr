@@ -84,6 +84,11 @@ module KemalJsonApi
       }.to_json
     end
 
+    def create(data : Hash(String, String) | Hash(String, JSON::Type)) : String | Nil
+      id = model.create(data)
+      read(id) unless id.nil?
+    end
+
     def convert_to_json_api(id : String, hash : Hash(String, String) | BSON | Nil)
       return nil unless hash
       json = JSON.parse(hash.to_json).as_h
@@ -93,6 +98,22 @@ module KemalJsonApi
         id:         id,
         attributes: json,
       }.to_json)
+    end
+
+    def prepare_params(env : HTTP::Server::Context) : Hash(String, String) | Hash(String, JSON::Type)
+      begin
+        data = Hash(String, String).new
+        body = env.request.body
+        if body
+          string = body.gets_to_end
+          data = JSON.parse(string).as_h
+        else
+          # TODO: Render error
+        end
+        data
+      rescue
+        Hash(String, String).new
+      end
     end
 
     protected def setup_actions!(actions = {} of Action::Method => Action::MethodType)

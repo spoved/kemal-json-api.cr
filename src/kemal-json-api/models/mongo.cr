@@ -19,12 +19,14 @@ module KemalJsonApi
       data
     end
 
-    def create(data : Hash(String, String))
-      ret = 0
+    def create(data : Hash(String, String) | Hash(String, JSON::Type)) : String | Nil
+      ret = nil
       @mongodb.with_collection(@collection) do |coll|
-        coll.insert(data)
+        doc = data.to_bson
+        doc["_id"] = BSON::ObjectId.new
+        coll.insert(doc)
         if (err = coll.last_error)
-          ret = err["nInserted"].as(Int)
+          return doc["_id"].to_s.chomp('\u0000')
         end
       end
       ret
