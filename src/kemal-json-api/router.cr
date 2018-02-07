@@ -17,7 +17,7 @@ module KemalJsonApi
               if data.has_key?("data") && data["data"].as(Hash(String, JSON::Type)).has_key?("type")
                 args = data["data"].as(Hash(String, JSON::Type))
                 ret = resource.create args["attributes"].as(Hash(String, JSON::Type))
-                puts ret
+                ret
               else
                 ret = nil
               end
