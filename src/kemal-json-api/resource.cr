@@ -1,3 +1,5 @@
+require "../ext/string"
+
 require "./action"
 require "./model"
 
@@ -48,9 +50,6 @@ module KemalJsonApi
     end
 
     def read(id : String) : String
-      ret = model.read id
-      ret.to_json
-
       begin
         ret = model.read(id)
         {
