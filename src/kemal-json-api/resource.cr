@@ -1,5 +1,4 @@
 require "../ext/string"
-
 require "./action"
 require "./model"
 

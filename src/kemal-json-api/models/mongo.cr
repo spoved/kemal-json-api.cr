@@ -5,20 +5,6 @@ module KemalJsonApi
     def initialize(@collection : String, @mongodb : KemalJsonApi::Adapter::Mongo)
     end
 
-    def prepare_params(env : HTTP::Server::Context, *, json = true) : Hash(String, String)
-      data = Hash(String, String).new
-      args = json ? env.params.json.to_json : env.params.body.to_h
-      if (args_ = args).class == Hash(String, String)
-        data = args.as(Hash(String, String))
-      else
-        data = Hash(String, String).new
-        JSON.parse(args.as(String)).each do |k, v|
-          data[k.to_s] = v.to_s
-        end
-      end
-      data
-    end
-
     def create(data : Hash(String, String) | Hash(String, JSON::Type)) : String | Nil
       ret = nil
       @mongodb.with_collection(@collection) do |coll|
