@@ -1,106 +1,64 @@
 require "../ext/string"
 require "./action"
-require "./model"
 
 module KemalJsonApi
-  class Resource
-    @resources = [] of Resource
+  # Abstract class to represent a JSON API resource object
+  # See http://jsonapi.org/format/#document-resource-objects for proper format
+  #  of the returns
+  abstract class Resource
     @actions = [] of Action
     @singular : String
     @plural : String
-    @option_json : Bool
-
-    getter :actions, :model, :singular, :prefix, :plural
 
     alias ActionsList = Hash(ActionMethod, ActionType)
 
-    def initialize(@model : Model, actions : ActionsList = ALL_ACTIONS, *, json = true, plural = "", prefix = "", singular = "")
-      @singular = singular.strip.empty? ? typeof(model).to_s.downcase : singular.strip
-      @prefix = prefix.strip.empty? ? "" : prefix.strip
-      @plural = plural.strip.empty? ? Resource.pluralize(@singular) : plural.strip
-      @option_json = json
-      @resources.push self
+    def initialize(*args, actions : ActionsList = ALL_ACTIONS, plural : String = "", prefix : String = "", singular : String = "")
+      @singular = singular.empty? ? self.class.to_s.underscore : singular.underscore
+      @plural = plural.empty? ? @singular.pluralize : plural.underscore
+      @prefix = prefix.underscore
       setup_actions! actions
     end
 
-    def set_options(*, json = true)
-      @option_json = json
+    getter :actions, :singular, :prefix, :plural
+
+    # Returns the singular name of the resource
+    # ```
+    # model.singular # => "trait"
+    # ```
+    def singular : String
+      @singular
     end
 
-    def reset!
-      @resources.clear
+    # Returns the plural name of the resource
+    # ```
+    # model.plural # => "traits"
+    # ```
+    def plural : String
+      @plural
     end
 
-    def self.pluralize(string)
-      case string
-      when /(s|x|z|ch)$/
-        "#{string}es"
-      when /(a|e|i|o|u)y$/
-        "#{string}s"
-      when /y$/
-        "#{string[0..-2]}ies"
-      when /f$/
-        "#{string[0..-2]}ves"
-      when /fe$/
-        "#{string[0..-3]}ves"
-      else
-        "#{string}s"
-      end
+    # Returns the prefix string of the resource
+    # ```
+    # model.prefix # => "model_"
+    # ```
+    def prefix : String
+      @prefix
     end
 
-    def read(id : String) : String
+    # Returns the collection name. Which is made up of prefix string and the
+    #  singular name of the resource
+    # ```
+    # model.prefix     # => "model_"
+    # model.singular   # => "trait"
+    # model.collection # => "model_trait"
+    # ```
+    def collection : String
+      "#{@prefix}#{@singular}"
+    end
+
+    def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Type)
       begin
-        ret = model.read(id)
-        {
-          links: {
-            self: "/#{plural}/#{id}",
-          },
-          data: convert_to_json_api(id, ret),
-        }.to_json
-      rescue
-        {
-          links: {
-            self: "/#{plural}/#{id}",
-          },
-          data: nil,
-        }.to_json
-      end
-    end
-
-    def list
-      ret = [] of Hash(String, String) | Nil | JSON::Any
-      model.list.each do |value|
-        id = value.has_key?("_id") ? value["_id"].to_s.chomp('\u0000') : value["id"].to_s
-        ret.push convert_to_json_api(id, value)
-      end
-
-      {
-        links: {
-          self: "/#{plural}",
-        },
-        data: ret,
-      }.to_json
-    end
-
-    def create(data : Hash(String, String) | Hash(String, JSON::Type)) : String | Nil
-      id = model.create(data)
-      read(id) unless id.nil?
-    end
-
-    def convert_to_json_api(id : String, hash : Hash(String, String) | BSON | Nil)
-      return nil unless hash
-      json = JSON.parse(hash.to_json).as_h
-      json.delete_if { |key, value| key =~ /^(id|_id)$/ }
-      JSON.parse({
-        type:       plural,
-        id:         id,
-        attributes: json,
-      }.to_json)
-    end
-
-    def prepare_params(env : HTTP::Server::Context) : Hash(String, String) | Hash(String, JSON::Type)
-      begin
-        data = Hash(String, String).new
+        data = Hash(String, JSON::Type).new
         body = env.request.body
         if body
           string = body.gets_to_end
@@ -110,9 +68,79 @@ module KemalJsonApi
         end
         data
       rescue
-        Hash(String, String).new
+        Hash(String, JSON::Type).new
       end
     end
+
+    # Should return a {String} contianing the id of the record created
+    # ```
+    # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"
+    # ```
+    abstract def create(data : JSON::Type) : String | Nil
+
+    # Should return a {Hash(String, JSON::Type)} object that contains the
+    #  record the {id} provided
+    # ```
+    # {
+    #   "type":       "articles",
+    #   "id":         "1",
+    #   "attributes": {
+    #     "title": "JSON API paints my bikeshed!",
+    #   },
+    #   "relationships": {
+    #     "author": {
+    #       "links": {
+    #         "related": "http://example.com/articles/1/author",
+    #       },
+    #     },
+    #   },
+    # }
+    # ```
+    abstract def read(id : Int | String) : JSON::Type | Nil
+
+    # Should return an updated {Hash(String, JSON::Type)} object that contains the
+    #  record and id that was updated
+    # ```
+    # {
+    #   "type":       "articles",
+    #   "id":         "1",
+    #   "attributes": {
+    #     "title": "JSON API paints my bikeshed!",
+    #   },
+    #   "relationships": {
+    #     "author": {
+    #       "links": {
+    #         "related": "http://example.com/articles/1/author",
+    #       },
+    #     },
+    #   },
+    # }
+    # ```
+    abstract def update(id : Int | String, args : JSON::Type) : JSON::Type | Nil
+
+    # Will return true/false indicating if the record was deleted
+    # ```
+    # Model.new.delete(1) # => true
+    # ```
+    abstract def delete(id : Int | String) : Bool
+
+    # Will return an array of JSON API resource objects
+    # ```
+    # [{
+    #   "type":       "articles",
+    #   "id":         "1",
+    #   "attributes": {
+    #     "title": "JSON API paints my bikeshed!",
+    #   },
+    # }, {
+    #   "type":       "articles",
+    #   "id":         "2",
+    #   "attributes": {
+    #     "title": "Rails is Omakase",
+    #   },
+    # }]
+    # ```
+    abstract def list : Array(JSON::Type)
 
     protected def setup_actions!(actions = {} of Action::Method => Action::MethodType)
       if !actions || actions.empty?

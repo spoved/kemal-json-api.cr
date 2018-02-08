@@ -1,9 +1,9 @@
 require "spec"
 require "json"
-require "../../src/kemal-json-api/model"
+require "../spec_helper"
 
 # :nodoc:
-class TestModel < KemalJsonApi::Model
+class TestModel < KemalJsonApi::Resource
   def create(data : JSON::Type) : String | Nil
     "550e8400-e29b-41d4-a716-446655440000"
   end

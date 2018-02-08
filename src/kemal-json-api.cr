@@ -2,7 +2,6 @@ require "kemal"
 require "uuid"
 require "./kemal-json-api/*"
 require "./kemal-json-api/adapters/*"
-require "./kemal-json-api/models/*"
 require "./kemal-json-api/resources/*"
 
 module KemalJsonApi
