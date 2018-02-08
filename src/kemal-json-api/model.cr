@@ -1,8 +1,51 @@
+require "../ext/string"
+
 module KemalJsonApi
   # Abstract class to represent a JSON API resource object
   # See http://jsonapi.org/format/#document-resource-objects for proper format
   #  of the return
   abstract class Model
+    def initialize(*args, @plural : String = "", @prefix : String = "", @singular : String = "")
+      @singular = singular.empty? ? self.class.to_s.underscore : singular.underscore
+      @plural = plural.empty? ? @singular.pluralize : plural.underscore
+      @prefix = prefix.underscore
+    end
+
+    # Returns the singular name of the resource
+    # ```
+    # model.singular # => "trait"
+    # ```
+    def singular : String
+      @singular
+    end
+
+    # Returns the plural name of the resource
+    # ```
+    # model.plural # => "traits"
+    # ```
+    def plural : String
+      @plural
+    end
+
+    # Returns the prefix string of the resource
+    # ```
+    # model.prefix # => "model_"
+    # ```
+    def prefix : String
+      @prefix
+    end
+
+    # Returns the collection name. Which is made up of prefix string and the
+    #  singular name of the resource
+    # ```
+    # model.prefix     # => "model_"
+    # model.singular   # => "trait"
+    # model.collection # => "model_trait"
+    # ```
+    def collection : String
+      "#{@prefix}#{@singular}"
+    end
+
     # Should return a {String} contianing the id of the record created
     # ```
     # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"

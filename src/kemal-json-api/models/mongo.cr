@@ -2,10 +2,11 @@ require "../model"
 
 module KemalJsonApi
   class Model::Mongo < KemalJsonApi::Model
-    def initialize(@collection : String, @mongodb : KemalJsonApi::Adapter::Mongo)
-    end
-
-    def create(data : Hash(String, String) | Hash(String, JSON::Type)) : String | Nil
+    # Should return a {String} contianing the id of the record created
+    # ```
+    # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"
+    # ```
+    def create(data : JSON::Type) : String | Nil
       ret = nil
       @mongodb.with_collection(@collection) do |coll|
         doc = data.to_bson
@@ -18,14 +19,49 @@ module KemalJsonApi
       ret
     end
 
-    # Returns the record identified by the provided id
-    def read(id : Int | String)
+    # Should return a {Hash(String, JSON::Type)} object that contains the
+    #  associated record to the {id} provided
+    # ```
+    # {
+    #   "type":       "articles",
+    #   "id":         "1",
+    #   "attributes": {
+    #     "title": "JSON API paints my bikeshed!",
+    #   },
+    #   "relationships": {
+    #     "author": {
+    #       "links": {
+    #         "related": "http://example.com/articles/1/author",
+    #       },
+    #     },
+    #   },
+    # }
+    # ```
+    def read(id : Int | String) : JSON::Type | Nil
       @mongodb.with_collection(@collection) do |coll|
-        coll.find_one({"_id" => BSON::ObjectId.new(id)})
+        record = coll.find_one({"_id" => BSON::ObjectId.new(id)})
       end
     end
 
-    def update(id : Int | String, data : Hash(String, String))
+    # Should return an updated {Hash(String, JSON::Type)} object that contains the
+    #  record and id that was updated
+    # ```
+    # {
+    #   "type":       "articles",
+    #   "id":         "1",
+    #   "attributes": {
+    #     "title": "JSON API paints my bikeshed!",
+    #   },
+    #   "relationships": {
+    #     "author": {
+    #       "links": {
+    #         "related": "http://example.com/articles/1/author",
+    #       },
+    #     },
+    #   },
+    # }
+    # ```
+    def update(id : Int | String, args : JSON::Type) : JSON::Type | Nil
       ret = 0
       @mongodb.with_collection(@collection) do |coll|
         coll.update({"_id" => BSON::ObjectId.new(id)}, {"$set" => data})
@@ -36,8 +72,12 @@ module KemalJsonApi
       ret
     end
 
-    # Deletes the record identified by the provided id
-    def delete(id : Int | String)
+    # Deletes the record identified by the provided id.
+    #   Will return true/false indicating if the record was deleted
+    # ```
+    # Model.new.delete(1) # => true
+    # ```
+    def delete(id : Int | String) : Bool
       ret = false
       @mongodb.with_collection(@collection) do |coll|
         doc = coll.find_one({"_id" => BSON::ObjectId.new(id)})
@@ -50,8 +90,23 @@ module KemalJsonApi
       ret
     end
 
-    # Returns a list of records
-    def list : Array
+    # Will return an array of JSON API resource objects
+    # ```
+    # [{
+    #   "type":       "articles",
+    #   "id":         "1",
+    #   "attributes": {
+    #     "title": "JSON API paints my bikeshed!",
+    #   },
+    # }, {
+    #   "type":       "articles",
+    #   "id":         "2",
+    #   "attributes": {
+    #     "title": "Rails is Omakase",
+    #   },
+    # }]
+    # ```
+    def list : Array(JSON::Type)
       results = [] of Hash(String, String)
       @mongodb.with_collection(@collection) do |coll|
         coll.find(BSON.new) do |doc|

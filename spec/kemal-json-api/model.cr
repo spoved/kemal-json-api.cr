@@ -64,6 +64,64 @@ class TestModel < KemalJsonApi::Model
 end
 
 describe TestModel do
+  describe "#singular" do
+    it "returns a default value for singular " do
+      model = TestModel.new
+      model.singular.should be_a(String)
+      model.singular.should eq "test_model"
+    end
+
+    it "returns the set value for singular " do
+      model = TestModel.new(singular: "trait")
+      model.singular.should be_a(String)
+      model.singular.should eq "trait"
+    end
+  end
+
+  describe "#plural" do
+    it "returns a default value for plural " do
+      model = TestModel.new
+      model.plural.should be_a(String)
+      model.plural.should eq "test_models"
+    end
+
+    it "returns the set value for plural " do
+      model = TestModel.new(plural: "traits")
+      model.singular.should be_a(String)
+      model.singular.should eq "test_model"
+      model.plural.should be_a(String)
+      model.plural.should eq "traits"
+    end
+  end
+
+  describe "#prefix" do
+    it "returns a default value for prefix " do
+      model = TestModel.new
+      model.prefix.should be_a(String)
+      model.prefix.should eq ""
+    end
+
+    it "returns the set value for prefix " do
+      model = TestModel.new(prefix: "prefix_")
+      model.prefix.should be_a(String)
+      model.prefix.should eq "prefix_"
+    end
+  end
+
+  describe "#collection" do
+    it "returns a default value for collection " do
+      model = TestModel.new
+      model.collection.should be_a(String)
+      model.collection.should eq "test_model"
+    end
+
+    it "returns the full value for collection " do
+      model = TestModel.new(prefix: "prefix_")
+      model.collection.should be_a(String)
+      model.collection.should eq "prefix_test_model"
+    end
+  end
+
   describe "#create" do
     it "returns a String id on create" do
       result = TestModel.new.create({"data" => "data"})
