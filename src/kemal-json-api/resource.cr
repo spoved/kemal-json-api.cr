@@ -9,6 +9,7 @@ module KemalJsonApi
     @actions = [] of Action
     @singular : String
     @plural : String
+    @prefix : String
 
     alias ActionsList = Hash(ActionMethod, ActionType)
 

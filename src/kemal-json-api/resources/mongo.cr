@@ -1,7 +1,7 @@
 require "../resource"
 
 module KemalJsonApi
-  class Resource::Mongo < KemalJsonApi::Model
+  class Resource::Mongo < KemalJsonApi::Resource
     # Should return a {String} contianing the id of the record created
     # ```
     # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"
@@ -122,7 +122,7 @@ module KemalJsonApi
         "type":          plural,
         "id":            doc["_id"],
         "attributes":    _gen_attributes(doc),
-        "relationships": {},
+        "relationships": {} of String => String,
       }
     end
 
@@ -131,6 +131,5 @@ module KemalJsonApi
       json.delete_if { |key, value| key =~ /^(id|_id)$/ }
       json
     end
-
   end
 end
