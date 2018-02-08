@@ -8,7 +8,7 @@ module KemalJsonApi
     # ```
     def create(data : JSON::Type) : String | Nil
       ret = nil
-      @mongodb.with_collection(collection) do |coll|
+      adapter.with_collection(collection) do |coll|
         doc = data.to_bson
         doc["_id"] = BSON::ObjectId.new
         coll.insert(doc)
@@ -38,9 +38,9 @@ module KemalJsonApi
     # }
     # ```
     def read(id : Int | String) : JSON::Type | Nil
-      @mongodb.with_collection(collection) do |coll|
+      adapter.with_collection(collection) do |coll|
         record = coll.find_one({"_id" => BSON::ObjectId.new(id)})
-        _gen_resource_object(record)
+        return _gen_resource_object(record) if record
       end
     end
 
@@ -63,14 +63,12 @@ module KemalJsonApi
     # }
     # ```
     def update(id : Int | String, args : JSON::Type) : JSON::Type | Nil
-      ret = 0
-      @mongodb.with_collection(collection) do |coll|
-        coll.update({"_id" => BSON::ObjectId.new(id)}, {"$set" => data})
+      adapter.with_collection(collection) do |coll|
+        coll.update({"_id" => BSON::ObjectId.new(id)}, {"$set" => args})
         if (err = coll.last_error)
-          ret = err["nModified"].as(Int)
+          ret = err["nModified"].as(Int64)
         end
       end
-      ret
     end
 
     # Deletes the record identified by the provided id.
@@ -80,7 +78,7 @@ module KemalJsonApi
     # ```
     def delete(id : Int | String) : Bool
       ret = false
-      @mongodb.with_collection(collection) do |coll|
+      adapter.with_collection(collection) do |coll|
         doc = coll.find_one({"_id" => BSON::ObjectId.new(id)})
         if doc
           #  TODO: remove find_one to use only remove?
@@ -109,7 +107,7 @@ module KemalJsonApi
     # ```
     def list : Array(JSON::Type)
       results = [] of JSON::Type
-      @mongodb.with_collection(collection) do |coll|
+      adapter.with_collection(collection) do |coll|
         coll.find(BSON.new) do |doc|
           results << _gen_resource_object(doc)
         end
@@ -117,15 +115,40 @@ module KemalJsonApi
       results
     end
 
+    # Should return a {Hash(String, JSON::Type)} object that contains the
+    #  translated associated {BSON} object
+    # ```
+    # {
+    #   "type":       "articles",
+    #   "id":         "1",
+    #   "attributes": {
+    #     "title": "JSON API paints my bikeshed!",
+    #   },
+    #   "relationships": {
+    #     "author": {
+    #       "links": {
+    #         "related": "http://example.com/articles/1/author",
+    #       },
+    #     },
+    #   },
+    # }
+    # ```
     def _gen_resource_object(doc : BSON) : JSON::Type
-      {
-        "type":          plural,
-        "id":            doc["_id"],
-        "attributes":    _gen_attributes(doc),
-        "relationships": {} of String => String,
+      Hash(String, JSON::Type){
+        "type"          => plural,
+        "id"            => doc["_id"].to_s.chomp('\u0000'),
+        "attributes"    => _gen_attributes(doc),
+        "relationships" => {} of String => JSON::Type,
       }
     end
 
+    # Should return a {Hash(String, JSON::Type)} object that contains the
+    #  attributes of the object. Will strip the id or _id field
+    # ```
+    # {
+    #   "title": "JSON API paints my bikeshed!",
+    # }
+    # ```
     def _gen_attributes(hash : BSON) : JSON::Type | Nil
       json = JSON.parse(hash.to_json).as_h
       json.delete_if { |key, value| key =~ /^(id|_id)$/ }

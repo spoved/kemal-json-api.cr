@@ -45,3 +45,10 @@ module KemalJsonApi
     }.to_json
   end
 end
+
+macro resource(name, adapter)
+  class ::{{name.camelcase.id}} < KemalJsonApi::Resource::Mongo
+  end
+
+  KemalJsonApi::Router.add {{name.camelcase.id}}.new({{adapter}})
+end

@@ -1,9 +1,16 @@
 require "kemal"
 
 module KemalJsonApi
-  class Resource
-    def generate_routes!
-      @resources.each do |resource|
+  class Router
+    @@resources = [] of KemalJsonApi::Resource
+
+    # Will append the resource to the router
+    def self.add(resource : KemalJsonApi::Resource)
+      @@resources.push resource
+    end
+
+    def self.generate_routes!
+      @@resources.each do |resource|
         resource.actions.each do |action|
           path = ""
           block = ->(env : HTTP::Server::Context) {}
@@ -47,7 +54,7 @@ module KemalJsonApi
             block = ->(env : HTTP::Server::Context) do
               id = env.params.url["id"]
               # TODO: let pass only valid fields
-              ret = resource.model.update id, resource.model.prepare_params(env, json: @option_json)
+              ret = resource.update(id, resource.prepare_params(env))
               env.response.content_type = "application/vnd.api+json"
               env.response.headers["Connection"] = "close"
               if ret.nil?
@@ -65,7 +72,7 @@ module KemalJsonApi
             path = "/#{resource.plural}/:id"
             block = ->(env : HTTP::Server::Context) do
               id = env.params.url["id"]
-              ret = resource.model.delete id
+              ret = resource.delete id
               env.response.status_code = ret ? 200 : 404
               env.response.content_type = "application/vnd.api+json"
               env.response.headers["Connection"] = "close"

@@ -63,16 +63,18 @@ class TestModel < KemalJsonApi::Resource
   end
 end
 
+adapter = KemalJsonApi::Adapter::Mongo.new("localhost", 1111, "test")
+
 describe TestModel do
   describe "#singular" do
     it "returns a default value for singular " do
-      model = TestModel.new
+      model = TestModel.new adapter
       model.singular.should be_a(String)
       model.singular.should eq "test_model"
     end
 
     it "returns the set value for singular " do
-      model = TestModel.new(singular: "trait")
+      model = TestModel.new(adapter, singular: "trait")
       model.singular.should be_a(String)
       model.singular.should eq "trait"
     end
@@ -80,13 +82,13 @@ describe TestModel do
 
   describe "#plural" do
     it "returns a default value for plural " do
-      model = TestModel.new
+      model = TestModel.new adapter
       model.plural.should be_a(String)
       model.plural.should eq "test_models"
     end
 
     it "returns the set value for plural " do
-      model = TestModel.new(plural: "traits")
+      model = TestModel.new(adapter, plural: "traits")
       model.singular.should be_a(String)
       model.singular.should eq "test_model"
       model.plural.should be_a(String)
@@ -96,13 +98,13 @@ describe TestModel do
 
   describe "#prefix" do
     it "returns a default value for prefix " do
-      model = TestModel.new
+      model = TestModel.new adapter
       model.prefix.should be_a(String)
       model.prefix.should eq ""
     end
 
     it "returns the set value for prefix " do
-      model = TestModel.new(prefix: "prefix_")
+      model = TestModel.new(adapter, prefix: "prefix_")
       model.prefix.should be_a(String)
       model.prefix.should eq "prefix_"
     end
@@ -110,13 +112,13 @@ describe TestModel do
 
   describe "#collection" do
     it "returns a default value for collection " do
-      model = TestModel.new
+      model = TestModel.new adapter
       model.collection.should be_a(String)
       model.collection.should eq "test_model"
     end
 
     it "returns the full value for collection " do
-      model = TestModel.new(prefix: "prefix_")
+      model = TestModel.new(adapter, prefix: "prefix_")
       model.collection.should be_a(String)
       model.collection.should eq "prefix_test_model"
     end
@@ -124,7 +126,7 @@ describe TestModel do
 
   describe "#create" do
     it "returns a String id on create" do
-      result = TestModel.new.create({"data" => "data"})
+      result = TestModel.new(adapter).create({"data" => "data"})
       result.should be_a(String)
       result.should eq "550e8400-e29b-41d4-a716-446655440000"
     end
@@ -132,7 +134,7 @@ describe TestModel do
 
   describe "#read" do
     it "returns a Hash on read" do
-      result = TestModel.new.read("1")
+      result = TestModel.new(adapter).read("1")
       result.should be_a Hash(String, JSON::Type)
     end
   end
@@ -140,21 +142,21 @@ describe TestModel do
   describe "#update" do
     it "returns a Hash on update" do
       data = {"title" => "JSON API paints my bikeshed!"}
-      result = TestModel.new.update("1", data)
+      result = TestModel.new(adapter).update("1", data)
       result.should be_a Hash(String, JSON::Type)
     end
   end
 
   describe "#delete" do
     it "returns a Hash on update" do
-      result = TestModel.new.delete("1")
+      result = TestModel.new(adapter).delete("1")
       result.should be_true
     end
   end
 
   describe "#list" do
     it "returns a Hash on list" do
-      result = TestModel.new.list
+      result = TestModel.new(adapter).list
       result.should be_a Array(JSON::Type)
     end
   end

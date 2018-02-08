@@ -1,5 +1,6 @@
 require "../ext/string"
 require "./action"
+require "./adapter"
 
 module KemalJsonApi
   # Abstract class to represent a JSON API resource object
@@ -10,17 +11,18 @@ module KemalJsonApi
     @singular : String
     @plural : String
     @prefix : String
+    @adapter : KemalJsonApi::Adapter
 
     alias ActionsList = Hash(ActionMethod, ActionType)
 
-    def initialize(*args, actions : ActionsList = ALL_ACTIONS, plural : String = "", prefix : String = "", singular : String = "")
-      @singular = singular.empty? ? self.class.to_s.underscore : singular.underscore
+    def initialize(@adapter : KemalJsonApi::Adapter, *args, actions : ActionsList = ALL_ACTIONS, plural : String = "", prefix : String = "", singular : String = "")
+      @singular = singular.empty? ? self.class.name.underscore : singular.underscore
       @plural = plural.empty? ? @singular.pluralize : plural.underscore
       @prefix = prefix.underscore
       setup_actions! actions
     end
 
-    getter :actions, :singular, :prefix, :plural
+    getter :actions, :singular, :prefix, :plural, :adapter
 
     # Returns the singular name of the resource
     # ```
@@ -55,22 +57,6 @@ module KemalJsonApi
     # ```
     def collection : String
       "#{@prefix}#{@singular}"
-    end
-
-    def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Type)
-      begin
-        data = Hash(String, JSON::Type).new
-        body = env.request.body
-        if body
-          string = body.gets_to_end
-          data = JSON.parse(string).as_h
-        else
-          # TODO: Render error
-        end
-        data
-      rescue
-        Hash(String, JSON::Type).new
-      end
     end
 
     # Should return a {String} contianing the id of the record created
@@ -142,6 +128,22 @@ module KemalJsonApi
     # }]
     # ```
     abstract def list : Array(JSON::Type)
+
+    def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Type)
+      begin
+        data = Hash(String, JSON::Type).new
+        body = env.request.body
+        if body
+          string = body.gets_to_end
+          data = JSON.parse(string).as_h
+        else
+          # TODO: Render error
+        end
+        data
+      rescue
+        Hash(String, JSON::Type).new
+      end
+    end
 
     protected def setup_actions!(actions = {} of Action::Method => Action::MethodType)
       if !actions || actions.empty?
