@@ -19,13 +19,13 @@ module KemalJsonApi
     end
 
     # Returns the requested database
-    def get_database(database : String)
+    def get_database(database : String) : ::Mongo::Database
       client = get_client
       client[database]
     end
 
     # Returns the requested collection
-    def get_collection(collection : String)
+    def get_collection(collection : String) : ::Mongo::Collection
       db = get_database(self.database_name)
       db[collection]
     end

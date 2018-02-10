@@ -1,5 +1,9 @@
 def adapter : KemalJsonApi::Adapter::Mongo
-  KemalJsonApi::Adapter::Mongo.new("localhost", 1111, "test")
+  KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
+end
+
+def mongo_resource_character : KemalJsonApi::Resource::Mongo
+  KemalJsonApi::Resource::Mongo.new(adapter, singular: "character")
 end
 
 # :nodoc:

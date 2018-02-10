@@ -10,7 +10,12 @@ module KemalJsonApi
       ret = nil
       adapter.with_collection(collection) do |coll|
         doc = data.to_bson
-        doc["_id"] = BSON::ObjectId.new
+        if doc.has_key?("id")
+          doc["_id"] = BSON::ObjectId.new(doc["id"].to_s)
+          doc["id"] = nil
+        else
+          doc["_id"] = BSON::ObjectId.new
+        end
         coll.insert(doc)
         if (err = coll.last_error)
           return doc["_id"].to_s.chomp('\u0000')
@@ -62,11 +67,13 @@ module KemalJsonApi
     #   },
     # }
     # ```
-    def update(id : Int | String, args : JSON::Type) : JSON::Type | Nil
+    def update(id : Int | String, args : JSON::Type) : Bool
       adapter.with_collection(collection) do |coll|
         coll.update({"_id" => BSON::ObjectId.new(id)}, {"$set" => args})
         if (err = coll.last_error)
-          ret = err["nModified"].as(Int64)
+          return err["nModified"] == 1 ? true : false
+        else
+          return false
         end
       end
     end
@@ -77,16 +84,14 @@ module KemalJsonApi
     # Model.new.delete(1) # => true
     # ```
     def delete(id : Int | String) : Bool
-      ret = false
       adapter.with_collection(collection) do |coll|
-        doc = coll.find_one({"_id" => BSON::ObjectId.new(id)})
-        if doc
-          #  TODO: remove find_one to use only remove?
-          coll.remove({"_id" => BSON::ObjectId.new(id)})
-          ret = true
+        coll.remove({"_id" => BSON::ObjectId.new(id)})
+        if (err = coll.last_error)
+          return err["nRemoved"] == 1 ? true : false
+        else
+          return false
         end
       end
-      ret
     end
 
     # Will return an array of JSON API resource objects
