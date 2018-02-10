@@ -35,7 +35,7 @@ module KemalJsonApi
       "mongodb://#{host}:#{port}/#{database_name}"
     end
 
-    def with_database
+    def with_database(&block : _)
       db = get_database(self.database_name)
       begin
         yield db
@@ -44,7 +44,7 @@ module KemalJsonApi
       end
     end
 
-    def with_collection(collection : String)
+    def with_collection(collection : String, &block : _)
       with_database do |db|
         col = self.get_collection(collection)
         yield col
