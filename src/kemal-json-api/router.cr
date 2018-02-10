@@ -163,7 +163,13 @@ module KemalJsonApi
       env.response.status_code = 200
       env.response.content_type = "application/vnd.api+json"
       env.response.headers["Connection"] = "close"
-      ret.to_json
+
+      {
+        links: {
+          self: "/#{path_info[:resource].plural}",
+        },
+        data: ret,
+      }.to_json
     end
 
     private def self.read(env : HTTP::Server::Context, path_info : PathInfo) : String
@@ -172,7 +178,12 @@ module KemalJsonApi
       env.response.status_code = ret ? 200 : 404
       env.response.content_type = "application/vnd.api+json"
       env.response.headers["Connection"] = "close"
-      ret.to_json
+      {
+        links: {
+          self: "/#{path_info[:resource].plural}/#{id}",
+        },
+        data: ret,
+      }.to_json
     end
 
     private def self.create(env : HTTP::Server::Context, path_info : PathInfo) : String
@@ -181,10 +192,16 @@ module KemalJsonApi
       data = path_info[:resource].prepare_params(env)
       if data.has_key?("data") && data["data"].as(Hash(String, JSON::Type)).has_key?("type")
         args = data["data"].as(Hash(String, JSON::Type))
-        ret = path_info[:resource].create args["attributes"].as(Hash(String, JSON::Type))
-        ret
+        id = path_info[:resource].create args["attributes"].as(Hash(String, JSON::Type))
+
+        id ? {
+          links: {
+            self: "/#{path_info[:resource].plural}/#{id}",
+          },
+          data: path_info[:resource].read(id),
+        }.to_json : ""
       else
-        ret = nil
+        ret = ""
       end
 
       env.response.content_type = "application/vnd.api+json"
