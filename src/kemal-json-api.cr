@@ -1,5 +1,6 @@
 require "kemal"
 require "uuid"
+require "./ext/string"
 require "./kemal-json-api/*"
 require "./kemal-json-api/adapters/*"
 require "./kemal-json-api/resources/*"
@@ -46,6 +47,7 @@ module KemalJsonApi
   end
 end
 
+# Macro to assist in creating {KemalJsonApi::Resources}
 macro resource(name, adapter)
   class ::{{name.camelcase.id}} < KemalJsonApi::Resource::Mongo
   end

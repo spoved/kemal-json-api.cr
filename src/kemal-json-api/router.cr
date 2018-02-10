@@ -4,7 +4,7 @@ module KemalJsonApi
   class Router
     @@resources = [] of KemalJsonApi::Resource
 
-    # Will append the resource to the router
+    # Will append the resource to the router list
     def self.add(resource : KemalJsonApi::Resource)
       @@resources.push resource
     end

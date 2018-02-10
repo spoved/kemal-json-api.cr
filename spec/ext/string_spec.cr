@@ -1,5 +1,4 @@
-require "spec"
-require "../../src/ext/string"
+require "../spec_helper"
 
 describe String do
   describe "#pluralize" do

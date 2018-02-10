@@ -1,5 +1,4 @@
-require "spec"
-require "../../../src/kemal-json-api/adapters/mongo"
+require "../../spec_helper"
 
 describe KemalJsonApi::Adapter::Mongo do
   describe "#new" do
