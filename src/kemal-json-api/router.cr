@@ -3,6 +3,7 @@ require "kemal"
 module KemalJsonApi
   class Router
     @@resources = [] of KemalJsonApi::Resource
+    class_property :resources
 
     # Will append the resource to the router list
     def self.add(resource : KemalJsonApi::Resource)
@@ -10,7 +11,7 @@ module KemalJsonApi
     end
 
     def self.generate_routes!
-      @@resources.each do |resource|
+      resources.each do |resource|
         resource.actions.each do |action|
           path = ""
           block = ->(env : HTTP::Server::Context) {}

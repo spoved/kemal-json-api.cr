@@ -4,59 +4,59 @@ describe KemalJsonApi do
   describe KemalJsonApi::Resource do
     describe "#singular" do
       it "returns a default value for singular " do
-        model = TestResource.new adapter
-        model.singular.should be_a(String)
-        model.singular.should eq "test_resource"
+        resource = TestResource.new adapter
+        resource.singular.should be_a(String)
+        resource.singular.should eq "test_resource"
       end
 
       it "returns the set value for singular " do
-        model = TestResource.new(adapter, singular: "trait")
-        model.singular.should be_a(String)
-        model.singular.should eq "trait"
+        resource = TestResource.new(adapter, singular: "trait")
+        resource.singular.should be_a(String)
+        resource.singular.should eq "trait"
       end
     end
 
     describe "#plural" do
       it "returns a default value for plural " do
-        model = TestResource.new adapter
-        model.plural.should be_a(String)
-        model.plural.should eq "test_resources"
+        resource = TestResource.new adapter
+        resource.plural.should be_a(String)
+        resource.plural.should eq "test_resources"
       end
 
       it "returns the set value for plural " do
-        model = TestResource.new(adapter, plural: "traits")
-        model.singular.should be_a(String)
-        model.singular.should eq "test_resource"
-        model.plural.should be_a(String)
-        model.plural.should eq "traits"
+        resource = TestResource.new(adapter, plural: "traits")
+        resource.singular.should be_a(String)
+        resource.singular.should eq "test_resource"
+        resource.plural.should be_a(String)
+        resource.plural.should eq "traits"
       end
     end
 
     describe "#prefix" do
       it "returns a default value for prefix " do
-        model = TestResource.new adapter
-        model.prefix.should be_a(String)
-        model.prefix.should eq ""
+        resource = TestResource.new adapter
+        resource.prefix.should be_a(String)
+        resource.prefix.should eq ""
       end
 
       it "returns the set value for prefix " do
-        model = TestResource.new(adapter, prefix: "prefix_")
-        model.prefix.should be_a(String)
-        model.prefix.should eq "prefix_"
+        resource = TestResource.new(adapter, prefix: "prefix_")
+        resource.prefix.should be_a(String)
+        resource.prefix.should eq "prefix_"
       end
     end
 
     describe "#collection" do
       it "returns a default value for collection " do
-        model = TestResource.new adapter
-        model.collection.should be_a(String)
-        model.collection.should eq "test_resource"
+        resource = TestResource.new adapter
+        resource.collection.should be_a(String)
+        resource.collection.should eq "test_resource"
       end
 
       it "returns the full value for collection " do
-        model = TestResource.new(adapter, prefix: "prefix_")
-        model.collection.should be_a(String)
-        model.collection.should eq "prefix_test_resource"
+        resource = TestResource.new(adapter, prefix: "prefix_")
+        resource.collection.should be_a(String)
+        resource.collection.should eq "prefix_test_resource"
       end
     end
 
