@@ -6,7 +6,7 @@ require "./kemal-json-api/adapters/*"
 require "./kemal-json-api/resources/*"
 
 module KemalJsonApi
-  DEBUG = false
+  DEBUG = true
 
   ALL_ACTIONS = {} of ActionMethod => ActionType
 
@@ -15,7 +15,7 @@ module KemalJsonApi
     {
       "id":     UUID.random.to_s,
       "status": "400",
-      "detail": "bad_request",
+      "title":  "bad_request",
     }.to_json
   end
 
@@ -24,7 +24,7 @@ module KemalJsonApi
     {
       "id":     UUID.random.to_s,
       "status": "401",
-      "detail": "not_authorized",
+      "title":  "not_authorized",
     }.to_json
   end
 
@@ -33,7 +33,17 @@ module KemalJsonApi
     {
       "id":     UUID.random.to_s,
       "status": "404",
-      "detail": "not_found",
+      "title":  "not_found",
+    }.to_json
+  end
+
+  error 415 do |env|
+    env.response.content_type = "application/vnd.api+json"
+    {
+      "id":     UUID.random.to_s,
+      "status": "415",
+      "title":  "unsupported_media_type",
+      "detail": "Need to supply Accept: application/vnd.api+json headers",
     }.to_json
   end
 
@@ -45,12 +55,4 @@ module KemalJsonApi
       "detail": "internal_server_error",
     }.to_json
   end
-end
-
-# Macro to assist in creating {KemalJsonApi::Resources}
-macro resource(name, adapter)
-  class ::{{name.camelcase.id}} < KemalJsonApi::Resource::Mongo
-  end
-
-  KemalJsonApi::Router.add {{name.camelcase.id}}.new({{adapter}})
 end

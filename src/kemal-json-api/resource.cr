@@ -59,6 +59,14 @@ module KemalJsonApi
       "#{@prefix}#{@singular}"
     end
 
+    def base_path : String
+      if prefix.empty?
+        plural
+      else
+        prefix + '/' + plural
+      end
+    end
+
     # Should return a {String} contianing the id of the record created
     # ```
     # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"
