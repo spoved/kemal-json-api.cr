@@ -3,7 +3,7 @@ def adapter : KemalJsonApi::Adapter::Mongo
 end
 
 # :nodoc:
-class TestModel < KemalJsonApi::Resource
+class TestResource < KemalJsonApi::Resource
   def create(data : JSON::Type) : String | Nil
     "550e8400-e29b-41d4-a716-446655440000"
   end
