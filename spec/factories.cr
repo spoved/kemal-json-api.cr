@@ -9,7 +9,13 @@ end
 def get_characters
   get "/characters"
   response.body.should_not be_nil
-  json = JSON.parse(response.body)
+  JSON.parse(response.body)
+end
+
+def get_characters_5a7f723025ae0bfae26b43d1
+  get "/characters/5a7f723025ae0bfae26b43d1"
+  response.body.should_not be_nil
+  JSON.parse(response.body)
 end
 
 # :nodoc:

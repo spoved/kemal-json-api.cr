@@ -56,6 +56,26 @@ describe KemalJsonApi do
             json["links"].as_h["self"].should eq "/characters"
           end
         end
+
+        describe "/characters/5a7f723025ae0bfae26b43d1" do
+          it "renders /characters/5a7f723025ae0bfae26b43d1" do
+            json = get_characters_5a7f723025ae0bfae26b43d1
+            json.should_not be_nil
+          end
+
+          it "has correct link to self" do
+            json = get_characters_5a7f723025ae0bfae26b43d1
+            json["links"].as_h["self"].should eq "/characters/5a7f723025ae0bfae26b43d1"
+          end
+
+          it "has correct resource" do
+            json = get_characters_5a7f723025ae0bfae26b43d1
+            json["data"].should_not be_nil
+            hash = json["data"].as_h
+            hash["type"].should eq "characters"
+            hash["id"].should eq "5a7f723025ae0bfae26b43d1"
+          end
+        end
       end
     end
   end
