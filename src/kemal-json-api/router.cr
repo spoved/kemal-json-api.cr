@@ -145,8 +145,7 @@ module KemalJsonApi
           data: path_info[:resource].read(id),
         }.to_json
       else
-        env.response.status_code = 400
-        {"status": "error", "message": "bad_request"}.to_json
+        error env, 400
       end
     end
 
@@ -158,10 +157,9 @@ module KemalJsonApi
       env.response.headers["Connection"] = "close"
       if ret
         env.response.status_code = 200
-        {"status": "ok"}.to_json
+        ""
       else
-        env.response.status_code = 404
-        {"status": "error", "message": "not_found"}.to_json
+        error env, 404
       end
     end
 
@@ -170,7 +168,6 @@ module KemalJsonApi
       env.response.status_code = 200
       env.response.content_type = "application/vnd.api+json"
       env.response.headers["Connection"] = "close"
-
       {
         links: {
           self: "/#{path_info[:resource].plural}",
@@ -182,15 +179,19 @@ module KemalJsonApi
     private def self.read(env : HTTP::Server::Context, path_info : PathInfo) : String
       id = env.params.url["id"]
       ret = path_info[:resource].read id
-      env.response.status_code = ret ? 200 : 404
-      env.response.content_type = "application/vnd.api+json"
-      env.response.headers["Connection"] = "close"
-      {
-        links: {
-          self: "/#{path_info[:resource].plural}/#{id}",
-        },
-        data: ret,
-      }.to_json
+      if ret
+        env.response.status_code = 200
+        env.response.content_type = "application/vnd.api+json"
+        env.response.headers["Connection"] = "close"
+        {
+          links: {
+            self: "/#{path_info[:resource].plural}/#{id}",
+          },
+          data: ret,
+        }.to_json
+      else
+        error env, 404
+      end
     end
 
     private def self.create(env : HTTP::Server::Context, path_info : PathInfo) : String
@@ -212,8 +213,58 @@ module KemalJsonApi
           data: path_info[:resource].read(id),
         }.to_json
       else
-        env.response.status_code = 400
-        {"status": "error", "message": "bad_request"}.to_json
+        error env, 400
+      end
+    end
+
+    private def self.error(env : HTTP::Server::Context, code : Int32) : String
+      env.response.status_code = code
+      env.response.content_type = "application/vnd.api+json"
+      case code
+      when 400
+        env.response.content_type = "application/vnd.api+json"
+        {
+          "id":     UUID.random.to_s,
+          "status": "400",
+          "title":  "bad_request",
+        }.to_json
+      when 401
+        env.response.content_type = "application/vnd.api+json"
+        {
+          "id":     UUID.random.to_s,
+          "status": "401",
+          "title":  "not_authorized",
+        }.to_json
+      when 404
+        env.response.content_type = "application/vnd.api+json"
+        {
+          "id":     UUID.random.to_s,
+          "status": "404",
+          "title":  "not_found",
+        }.to_json
+      when 415
+        env.response.content_type = "application/vnd.api+json"
+        {
+          "id":     UUID.random.to_s,
+          "status": "415",
+          "title":  "unsupported_media_type",
+          "detail": "Need to supply Accept: application/vnd.api+json headers",
+        }.to_json
+      when 500
+        env.response.content_type = "application/vnd.api+json"
+        {
+          "id":     UUID.random.to_s,
+          "status": "500",
+          "detail": "internal_server_error",
+        }.to_json
+      else
+        env.response.status_code = 500
+        env.response.content_type = "application/vnd.api+json"
+        {
+          "id":     UUID.random.to_s,
+          "status": "500",
+          "detail": "internal_server_error",
+        }.to_json
       end
     end
   end
