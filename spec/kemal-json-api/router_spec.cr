@@ -76,6 +76,18 @@ describe KemalJsonApi do
             hash["id"].should eq "5a7f723025ae0bfae26b43d1"
           end
         end
+
+        describe "POST /characters" do
+          it "creates new resource" do
+            json = post_characters(Hash(String, String){"name" => "Ringo"})
+            json.should_not be_nil
+            json["data"].should_not be_nil
+            hash = json["data"].as_h
+            hash["type"].should eq "characters"
+            attrs = hash["attributes"].as(Hash(String, JSON::Type))
+            attrs["name"].should eq "Ringo"
+          end
+        end
       end
     end
   end

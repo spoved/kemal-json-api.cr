@@ -188,27 +188,22 @@ module KemalJsonApi
 
     private def self.create(env : HTTP::Server::Context, path_info : PathInfo) : String
       # TODO: let pass only valid fields
-      # puts env.inspect
       data = path_info[:resource].prepare_params(env)
       if data.has_key?("data") && data["data"].as(Hash(String, JSON::Type)).has_key?("type")
         args = data["data"].as(Hash(String, JSON::Type))
         id = path_info[:resource].create args["attributes"].as(Hash(String, JSON::Type))
-
-        id ? {
-          links: {
-            self: "/#{path_info[:resource].plural}/#{id}",
-          },
-          data: path_info[:resource].read(id),
-        }.to_json : ""
-      else
-        ret = ""
       end
 
       env.response.content_type = "application/vnd.api+json"
       env.response.headers["Connection"] = "close"
-      if ret && !ret.nil?
+      if id && !id.nil?
         env.response.status_code = 201
-        ret
+        {
+          links: {
+            self: "/#{path_info[:resource].plural}/#{id}",
+          },
+          data: path_info[:resource].read(id),
+        }.to_json
       else
         env.response.status_code = 400
         {"status": "error", "message": "bad_request"}.to_json

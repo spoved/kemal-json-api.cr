@@ -22,6 +22,23 @@ def get_characters_5a7f723025ae0bfae26b43d1
   JSON.parse(response.body)
 end
 
+def post_characters(data : Hash(String, String))
+  headers = HTTP::Headers.new
+  headers["Content-Type"] = "application/vnd.api+json"
+  headers["Accept"] = "application/vnd.api+json"
+
+  payload = %Q({
+    "data": {
+      "type": "characters",
+      "attributes": #{data.to_json}
+    }
+  })
+
+  post "/characters", headers, payload
+  response.body.should_not be_nil
+  JSON.parse(response.body)
+end
+
 # :nodoc:
 class TestResource < KemalJsonApi::Resource
   def create(data : JSON::Type) : String | Nil
