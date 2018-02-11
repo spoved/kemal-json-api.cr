@@ -13,14 +13,12 @@ module KemalJsonApi
 
       if (env.request.headers.has_key?("Accept") &&
          env.request.headers["Accept"] == "application/vnd.api+json")
-        puts "setting content header"
         env.response.content_type = "application/vnd.api+json"
+        return call_next(env)
       else
-        puts "Bad content type"
-        puts env
+        # TODO: Return a 415 error
+        return call_next(env)
       end
-
-      return call_next(env)
     end
   end
 end

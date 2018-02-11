@@ -6,6 +6,12 @@ def mongo_resource_character : KemalJsonApi::Resource::Mongo
   KemalJsonApi::Resource::Mongo.new(adapter, singular: "character")
 end
 
+def get_characters
+  get "/characters"
+  response.body.should_not be_nil
+  json = JSON.parse(response.body)
+end
+
 # :nodoc:
 class TestResource < KemalJsonApi::Resource
   def create(data : JSON::Type) : String | Nil

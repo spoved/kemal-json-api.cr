@@ -6,7 +6,7 @@ require "./kemal-json-api/adapters/*"
 require "./kemal-json-api/resources/*"
 
 module KemalJsonApi
-  DEBUG = true
+  DEBUG = false
 
   ALL_ACTIONS = {} of ActionMethod => ActionType
 

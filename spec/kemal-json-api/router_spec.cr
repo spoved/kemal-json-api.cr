@@ -39,14 +39,22 @@ describe KemalJsonApi do
           Kemal.run
         end
 
-        it "renders /" do
-          begin
-            get "/characters"
-            puts response.inspect
-          rescue ex
-            puts ex.backtrace
+        describe "/characters" do
+          it "renders /characters" do
+            json = get_characters
+            json.should_not be_nil
           end
-          # response.body.should eq "Hello World!"
+
+          it "has correct number of characters" do
+            json = get_characters
+            json["data"].as_a.empty?.should be_false
+            json["data"].as_a.size.should eq 2
+          end
+
+          it "has correct link to self" do
+            json = get_characters
+            json["links"].as_h["self"].should eq "/characters"
+          end
         end
       end
     end
