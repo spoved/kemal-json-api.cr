@@ -14,6 +14,7 @@ module KemalJsonApi
       if (env.request.headers.has_key?("Accept") &&
          env.request.headers["Accept"] == "application/vnd.api+json")
         env.response.content_type = "application/vnd.api+json"
+        # puts "updating header"
         return call_next(env)
       else
         # TODO: Return a 415 error

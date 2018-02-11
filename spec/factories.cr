@@ -7,13 +7,17 @@ def mongo_resource_character : KemalJsonApi::Resource::Mongo
 end
 
 def get_characters
+  headers = HTTP::Headers.new
+  headers["Accept"] = "application/vnd.api+json"
   get "/characters"
   response.body.should_not be_nil
   JSON.parse(response.body)
 end
 
 def get_characters_5a7f723025ae0bfae26b43d1
-  get "/characters/5a7f723025ae0bfae26b43d1"
+  headers = HTTP::Headers.new
+  headers["Accept"] = "application/vnd.api+json"
+  get "/characters/5a7f723025ae0bfae26b43d1", headers
   response.body.should_not be_nil
   JSON.parse(response.body)
 end
