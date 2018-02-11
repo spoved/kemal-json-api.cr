@@ -1,4 +1,5 @@
 require "../spec_helper"
+require "../../src/kemal-json-api/macros/router"
 
 describe KemalJsonApi do
   describe KemalJsonApi::Router do
@@ -15,20 +16,38 @@ describe KemalJsonApi do
           KemalJsonApi::Router.resources.empty?.should be_true
           KemalJsonApi::Router.resources = [TestResource.new(adapter)] of KemalJsonApi::Resource
           KemalJsonApi::Router.resources.empty?.should be_false
-          clear_resources
         end
       end
 
       describe ".add" do
-        KemalJsonApi::Router.resources.empty?.should be_true
-        KemalJsonApi::Router.add TestResource.new(adapter)
-        KemalJsonApi::Router.resources.empty?.should be_false
-        clear_resources
+        it "can add new resource" do
+          KemalJsonApi::Router.resources.empty?.should be_true
+          KemalJsonApi::Router.add TestResource.new(adapter)
+          KemalJsonApi::Router.resources.empty?.should be_false
+        end
       end
     end
 
     context "with resources" do
-      pending ".generate_routes!" do
+      describe ".generate_routes!" do
+        it "can generate routes" do
+          KemalJsonApi::Router.resources.empty?.should be_true
+          json_api_resource "character", adapter
+          KemalJsonApi::Router.resources.empty?.should be_false
+          KemalJsonApi::Router.generate_routes!
+          add_handler KemalJsonApi::Handler.new
+          Kemal.run
+        end
+
+        it "renders /" do
+          begin
+            get "/characters"
+            puts response.inspect
+          rescue ex
+            puts ex.backtrace
+          end
+          # response.body.should eq "Hello World!"
+        end
       end
     end
   end
