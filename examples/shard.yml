@@ -3,13 +3,10 @@ name: examples
 version: 0.1.0
 
 dependencies:
-  db:
-    github: crystal-lang/crystal-db
   kemal:
     github: kemalcr/kemal
   kemal-json-api:
     github: spoved/kemal-json-api
-  sqlite3:
-    github: crystal-lang/crystal-sqlite3
-  mysql:
-    github: crystal-lang/crystal-mysql
+  mongo:
+    github: sam0x17/mongo.cr
+    branch: master

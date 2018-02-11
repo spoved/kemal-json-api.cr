@@ -7,6 +7,7 @@ module KemalJsonApi
     class_property :resources
     class_getter :handler
 
+    # A {NamedTuple} containing all information needed to generate a kemal route
     alias PathInfo = NamedTuple(
       resource: KemalJsonApi::Resource,
       path: String,
@@ -27,6 +28,8 @@ module KemalJsonApi
       end
     end
 
+    # Will create a {PathInfo} containing all information needed to generate
+    #  kemal routes
     private def self.create_path(resource : KemalJsonApi::Resource, action : KemalJsonApi::Action) : PathInfo
       case action.method
       when ActionMethod::CREATE
@@ -74,6 +77,7 @@ module KemalJsonApi
       end
     end
 
+    # Will create kemal route based on the path_info
     private def self.create_route(path_info : PathInfo)
       case path_info[:action].type
       when ActionType::GET
@@ -125,6 +129,7 @@ module KemalJsonApi
       puts "#{path_info[:action].type} #{path_info[:path]}" if DEBUG
     end
 
+    # Proc to handle updating resources
     private def self.update(env : HTTP::Server::Context, path_info : PathInfo) : String
       id = env.params.url["id"]
       updated = false
@@ -149,6 +154,7 @@ module KemalJsonApi
       end
     end
 
+    # Proc to handle deleting resources
     private def self.delete(env : HTTP::Server::Context, path_info : PathInfo) : String
       id = env.params.url["id"]
       ret = path_info[:resource].delete id
@@ -163,6 +169,7 @@ module KemalJsonApi
       end
     end
 
+    # Proc to handle listing resources
     private def self.list(env : HTTP::Server::Context, path_info : PathInfo) : String
       ret = path_info[:resource].list
       env.response.status_code = 200
@@ -176,6 +183,7 @@ module KemalJsonApi
       }.to_json
     end
 
+    # Proc to handle reading a sindle resource
     private def self.read(env : HTTP::Server::Context, path_info : PathInfo) : String
       id = env.params.url["id"]
       ret = path_info[:resource].read id
@@ -194,6 +202,7 @@ module KemalJsonApi
       end
     end
 
+    # Proc to handle create resources
     private def self.create(env : HTTP::Server::Context, path_info : PathInfo) : String
       # TODO: let pass only valid fields
       data = path_info[:resource].prepare_params(env)
@@ -217,6 +226,8 @@ module KemalJsonApi
       end
     end
 
+    # Will set env status_code and content_type, will return error json string
+    #  based on passed code
     private def self.error(env : HTTP::Server::Context, code : Int32) : String
       env.response.status_code = code
       env.response.content_type = "application/vnd.api+json"
