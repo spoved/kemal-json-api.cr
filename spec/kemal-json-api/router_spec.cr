@@ -39,7 +39,7 @@ describe KemalJsonApi do
           Kemal.run
         end
 
-        describe "/characters" do
+        describe "GET /characters" do
           it "renders /characters" do
             json = get_characters
             json.should_not be_nil
@@ -57,7 +57,7 @@ describe KemalJsonApi do
           end
         end
 
-        describe "/characters/5a7f723025ae0bfae26b43d1" do
+        describe "GET /characters/5a7f723025ae0bfae26b43d1" do
           it "renders /characters/5a7f723025ae0bfae26b43d1" do
             json = get_characters_5a7f723025ae0bfae26b43d1
             json.should_not be_nil
