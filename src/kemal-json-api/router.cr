@@ -127,19 +127,26 @@ module KemalJsonApi
 
     private def self.update(env : HTTP::Server::Context, path_info : PathInfo) : String
       id = env.params.url["id"]
-      # TODO: let pass only valid fields
-      ret = path_info[:resource].update(id, path_info[:resource].prepare_params(env))
+      updated = false
+      data = path_info[:resource].prepare_params(env)
+      if data.has_key?("data") && data["data"].as(Hash(String, JSON::Type)).has_key?("type")
+        args = data["data"].as(Hash(String, JSON::Type))
+        updated = path_info[:resource].update id, args["attributes"].as(Hash(String, JSON::Type))
+      end
+
       env.response.content_type = "application/vnd.api+json"
       env.response.headers["Connection"] = "close"
-      if ret.nil?
-        env.response.status_code = 404
-        {"status": "error", "message": "not_found"}.to_json
-      elsif ret == 0
+      if updated
+        env.response.status_code = 200
+        {
+          links: {
+            self: "/#{path_info[:resource].plural}/#{id}",
+          },
+          data: path_info[:resource].read(id),
+        }.to_json
+      else
         env.response.status_code = 400
         {"status": "error", "message": "bad_request"}.to_json
-      else
-        env.response.status_code = 200
-        {"status": "ok"}.to_json
       end
     end
 

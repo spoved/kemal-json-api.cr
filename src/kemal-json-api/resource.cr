@@ -141,6 +141,7 @@ module KemalJsonApi
       begin
         data = Hash(String, JSON::Type).new
         body = env.request.body
+
         if body
           string = body.gets_to_end
           data = JSON.parse(string).as_h
@@ -148,7 +149,7 @@ module KemalJsonApi
           # TODO: Render error
         end
         data
-      rescue
+      rescue ex
         Hash(String, JSON::Type).new
       end
     end
@@ -157,7 +158,7 @@ module KemalJsonApi
       if !actions || actions.empty?
         @actions.push Action.new(ActionMethod::CREATE, ActionType::POST)
         @actions.push Action.new(ActionMethod::READ, ActionType::GET)
-        @actions.push Action.new(ActionMethod::UPDATE, ActionType::PUT)
+        @actions.push Action.new(ActionMethod::UPDATE, ActionType::PATCH)
         @actions.push Action.new(ActionMethod::DELETE, ActionType::DELETE)
         @actions.push Action.new(ActionMethod::LIST, ActionType::GET)
       else

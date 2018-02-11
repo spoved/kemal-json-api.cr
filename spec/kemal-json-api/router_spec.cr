@@ -57,19 +57,19 @@ describe KemalJsonApi do
           end
         end
 
-        describe "GET /characters/5a7f723025ae0bfae26b43d1" do
-          it "renders /characters/5a7f723025ae0bfae26b43d1" do
-            json = get_characters_5a7f723025ae0bfae26b43d1
+        describe "GET /characters/:id" do
+          it "renders /characters/:id" do
+            json = get_characters("5a7f723025ae0bfae26b43d1")
             json.should_not be_nil
           end
 
           it "has correct link to self" do
-            json = get_characters_5a7f723025ae0bfae26b43d1
+            json = get_characters("5a7f723025ae0bfae26b43d1")
             json["links"].as_h["self"].should eq "/characters/5a7f723025ae0bfae26b43d1"
           end
 
           it "has correct resource" do
-            json = get_characters_5a7f723025ae0bfae26b43d1
+            json = get_characters("5a7f723025ae0bfae26b43d1")
             json["data"].should_not be_nil
             hash = json["data"].as_h
             hash["type"].should eq "characters"
@@ -86,6 +86,43 @@ describe KemalJsonApi do
             hash["type"].should eq "characters"
             attrs = hash["attributes"].as(Hash(String, JSON::Type))
             attrs["name"].should eq "Ringo"
+          end
+        end
+
+        describe "PATCH /characters/:id" do
+          it "update resource" do
+            json = post_characters(Hash(String, String){"name" => "Ringo", "age" => "44"})
+            json.should_not be_nil
+            json["data"].should_not be_nil
+            hash = json["data"].as_h
+            hash["type"].should eq "characters"
+            attrs = hash["attributes"].as(Hash(String, JSON::Type))
+            attrs["name"].should eq "Ringo"
+            id = hash["id"].as(String)
+
+            update = patch_characters(id, Hash(String, String){"name" => "Dingo"})
+            update.should_not be_nil
+            update["data"].should_not be_nil
+            hash = update["data"].as_h
+            hash["type"].should eq "characters"
+            attrs = hash["attributes"].as(Hash(String, JSON::Type))
+            attrs["name"].should eq "Dingo"
+            attrs["age"].should eq "44"
+          end
+        end
+
+        describe "DELETE /characters/:id" do
+          it "creates new resource" do
+            json = post_characters(Hash(String, String){"name" => "Ringo"})
+            json.should_not be_nil
+            json["data"].should_not be_nil
+            hash = json["data"].as_h
+            hash["type"].should eq "characters"
+            attrs = hash["attributes"].as(Hash(String, JSON::Type))
+            attrs["name"].should eq "Ringo"
+            id = hash["id"].as(String)
+
+            delete_characters(id).should eq 200
           end
         end
       end

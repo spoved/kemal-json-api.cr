@@ -14,12 +14,19 @@ def get_characters
   JSON.parse(response.body)
 end
 
-def get_characters_5a7f723025ae0bfae26b43d1
+def get_characters(id : String)
   headers = HTTP::Headers.new
   headers["Accept"] = "application/vnd.api+json"
-  get "/characters/5a7f723025ae0bfae26b43d1", headers
+  get "/characters/#{id}", headers
   response.body.should_not be_nil
   JSON.parse(response.body)
+end
+
+def delete_characters(id : String)
+  headers = HTTP::Headers.new
+  headers["Accept"] = "application/vnd.api+json"
+  delete "/characters/#{id}", headers
+  response.status_code
 end
 
 def post_characters(data : Hash(String, String))
@@ -35,6 +42,24 @@ def post_characters(data : Hash(String, String))
   })
 
   post "/characters", headers, payload
+  response.body.should_not be_nil
+  JSON.parse(response.body)
+end
+
+def patch_characters(id : String, data : Hash(String, String))
+  headers = HTTP::Headers.new
+  headers["Content-Type"] = "application/vnd.api+json"
+  headers["Accept"] = "application/vnd.api+json"
+
+  payload = %Q({
+    "data": {
+      "type": "characters",
+      "id": "#{id}",
+      "attributes": #{data.to_json}
+    }
+  })
+
+  patch "/characters/#{id}", headers, payload
   response.body.should_not be_nil
   JSON.parse(response.body)
 end
