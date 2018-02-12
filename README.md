@@ -24,7 +24,6 @@ require "kemal"
 require "kemal-json-api"
 
 mongodb = KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
- KemalJsonApi::Resource::Mongo.new({{adapter}}, singular: {{name}})
 
 class MyModel < KemalJsonApi::Resource::Mongo
 end
