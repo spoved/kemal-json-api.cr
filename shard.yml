@@ -3,7 +3,6 @@ version: 0.0.1
 
 authors:
   - Holden Omans <holden.omans@gmail.com>
-  - Mattia Roccoberton <mat@blocknot.es>
 
 dependencies:
   kemal:
