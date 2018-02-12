@@ -1,3 +1,10 @@
 services:
   - mongodb
 language: crystal
+script:
+  - git clone https://github.com/mongodb/mongo-c-driver.git
+  - cd mongo-c-driver
+  - cmake -DBUILD_SHARED_LIBS=ON
+  - make
+  - sudo make install
+  - cd ..
