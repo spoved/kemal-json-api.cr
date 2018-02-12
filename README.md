@@ -1,8 +1,8 @@
-# kemal-rest-api [![Build Status](https://travis-ci.org/blocknotes/kemal-rest-api.svg?branch=develop)](https://travis-ci.org/blocknotes/kemal-rest-api)
+# kemal-json-api [![Build Status](https://travis-ci.org/spoved/kemal-json-api.svg?branch=master)](https://travis-ci.org/spoved/kemal-json-api)
 
 A Crystal library to create REST API with Kemal.
 
-See [examples](https://github.com/blocknotes/kemal-rest-api/tree/master/examples) folder for **mysql**, **sqlite3** and **mongo** samples.
+See [examples](https://github.com/spoved/kemal-json-api/tree/master/examples) folder for **mongo** samples.
 
 **NOTE**: this is a *beta* version, a lot of features and security improvements need to be implemented actually
 
@@ -12,27 +12,25 @@ Add this to your application's `shard.yml`:
 
 ```yaml
 dependencies:
-  kemal-rest-api:
-    github: blocknotes/kemal-rest-api
+  kemal-json-api:
+    github: spoved/kemal-json-api
 ```
 
 ## Usage
 
 ```ruby
-require "db"       # dependency required to use CrystalDbModel
-require "sqlite3"  # dependency required to use CrystalDbModel - alternatives: crystal-mysql, crystal-pg
+require "mongo"
 require "kemal"
-require "kemal-rest-api"
+require "kemal-json-api"
 
-class MyModel < KemalRestApi::Adapters::CrystalDbModel
-  def initialize
-    super "sqlite3:./db.sqlite3", "my_table"
-  end
+mongodb = KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
+
+class MyModel < KemalJsonApi::Resource::Mongo
 end
 
 module WebApp
-  res = KemalRestApi::Resource.new MyModel.new, KemalRestApi::ALL_ACTIONS, prefix: "api", singular: "item"
-  res.generate_routes!
+  KemalJsonApi::Router.add MyModel.new(mongodb, actions: KemalJsonApi::ALL_ACTIONS, prefix: "api", singular: "item")
+  KemalJsonApi::Router.generate_routes!
   Kemal.run
 end
 ```
@@ -43,27 +41,24 @@ Generated routes:
 GET    /api/items
 GET    /api/items/:id
 POST   /api/items
-PUT    /api/items/:id
+PATCH  /api/items/:id
 DELETE /api/items/:id
 ```
 
-## KemalRestApi::Resource options
+## KemalJsonApi::Resource options
 
-- **json** (*Bool*): form payload as JSON instead of formdata, default = true
 - **plural** (*String*): plural name of the model, used for routes, default = *singular* pluralized
 - **prefix** (*String*): prefix for all API routes, default = ""
 - **singular** (*String*): singular name of the model, default = class model name lowercase
 
 ## More examples
 
-See [examples](https://github.com/blocknotes/kemal-rest-api/tree/master/examples) folder.
+See [examples](https://github.com/spoved/kemal-json-api/tree/master/examples) folder.
 
 ## Notes
 
-*crystal-db* shard is required only if `KemalRestApi::Adapters::CrystalDbModel` is used.
-
-The proposed adapters are basic implementations, you can create easily a model adapter that responds better to your needs. *prepare_params* is used to adjust the create/update parameters.
+Currently Mongodb is the only adapter available
 
 ## Contributors
 
-- [Mattia Roccoberton](http://blocknot.es) - creator, maintainer, Crystal fan :)
+- [Holden Omans](https://github.com/kalinon) - creator, maintainer, Crystal fan
