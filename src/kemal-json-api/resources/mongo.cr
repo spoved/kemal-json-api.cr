@@ -51,6 +51,11 @@ module KemalJsonApi
       end
     end
 
+    # TODO: Finish
+    def read_relation(id : Int | String, relation : String) : JSON::Type | Nil
+      nil
+    end
+
     # Should return an updated `Hash(String, JSON::Type)` object that contains the
     #  record and id that was updated
     #
@@ -123,6 +128,11 @@ module KemalJsonApi
         end
       end
       results
+    end
+
+    # TODO: Finish
+    def list_relations(id : Int | String, relation : String) : Array(JSON::Type)
+      results = [] of JSON::Type
     end
 
     # Should return a `Hash(String, JSON::Type)` object that contains the
