@@ -1,12 +1,11 @@
 services:
   - mongodb
 language: crystal
-before-script:
+script:
   - git clone https://github.com/mongodb/mongo-c-driver.git
   - cd mongo-c-driver
   - cmake -DBUILD_SHARED_LIBS=ON
   - make
   - sudo make install
   - cd ..
-script:
   - LD_LIBRARY_PATH=/usr/local/lib KEMAL_ENV=test crystal spec

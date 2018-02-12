@@ -110,7 +110,7 @@ describe KemalJsonApi do
         end
 
         describe "DELETE /characters/:id" do
-          it "creates new resource" do
+          it "deletes resource" do
             json = post_characters(Hash(String, String){"name" => "Ringo"})
             json.should_not be_nil
             json["data"].should_not be_nil
