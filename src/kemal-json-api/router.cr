@@ -86,7 +86,7 @@ module KemalJsonApi
           begin
             path_info[:block].call env, path_info
           rescue ex : Exception
-            {"status": "error", "message": ex.message}.to_json
+            error env, 0, ex.message.to_s
           end
         end
       when ActionType::POST
@@ -95,7 +95,7 @@ module KemalJsonApi
           begin
             path_info[:block].call env, path_info
           rescue ex : Exception
-            {"status": "error", "message": ex.message}.to_json
+            error env, 0, ex.message.to_s
           end
         end
       when ActionType::PUT
@@ -104,7 +104,7 @@ module KemalJsonApi
           begin
             path_info[:block].call env, path_info
           rescue ex : Exception
-            {"status": "error", "message": ex.message}.to_json
+            error env, 0, ex.message.to_s
           end
         end
       when ActionType::PATCH
@@ -113,7 +113,7 @@ module KemalJsonApi
           begin
             path_info[:block].call env, path_info
           rescue ex : Exception
-            {"status": "error", "message": ex.message}.to_json
+            error env, 0, ex.message.to_s
           end
         end
       when ActionType::DELETE
@@ -122,7 +122,7 @@ module KemalJsonApi
           begin
             path_info[:block].call env, path_info
           rescue ex : Exception
-            {"status": "error", "message": ex.message}.to_json
+            error env, 0, ex.message.to_s
           end
         end
       end
@@ -228,7 +228,7 @@ module KemalJsonApi
 
     # Will set `HTTP::Server::Context` status_code and content_type, will return
     #  error json stringbased on passed code
-    private def self.error(env : HTTP::Server::Context, code : Int32) : String
+    private def self.error(env : HTTP::Server::Context, code : Int32, msg : String = "") : String
       env.response.status_code = code
       env.response.content_type = "application/vnd.api+json"
       case code
@@ -272,9 +272,10 @@ module KemalJsonApi
         env.response.status_code = 500
         env.response.content_type = "application/vnd.api+json"
         {
-          "id":     UUID.random.to_s,
-          "status": "500",
-          "detail": "internal_server_error",
+          "id":      UUID.random.to_s,
+          "status":  "500",
+          "detail":  "internal_server_error",
+          "message": msg,
         }.to_json
       end
     end
