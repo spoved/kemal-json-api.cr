@@ -6,6 +6,5 @@ mongodb = KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
 module WebApp
   json_api_resource "trait", mongodb
   KemalJsonApi::Router.generate_routes!
-  add_handler KemalJsonApi::Handler.new
   Kemal.run
 end

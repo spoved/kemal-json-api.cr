@@ -26,6 +26,8 @@ module KemalJsonApi
           create_route(path_info) unless path_info[:path].empty?
         end
       end
+
+      add_handler KemalJsonApi::Handler.new
     end
 
     # Will create a `PathInfo` containing all information needed to generate
