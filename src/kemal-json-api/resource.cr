@@ -34,7 +34,7 @@ module KemalJsonApi
     # Returns the singular name of the resource
     #
     # ```
-    # model.singular # => "trait"
+    # resource.singular # => "trait"
     # ```
     def singular : String
       @singular
@@ -43,7 +43,7 @@ module KemalJsonApi
     # Returns the plural name of the resource
     #
     # ```
-    # model.plural # => "traits"
+    # resource.plural # => "traits"
     # ```
     def plural : String
       @plural
@@ -52,7 +52,7 @@ module KemalJsonApi
     # Returns the prefix string of the resource
     #
     # ```
-    # model.prefix # => "model_"
+    # resource.prefix # => "model_"
     # ```
     def prefix : String
       @prefix
@@ -62,14 +62,32 @@ module KemalJsonApi
     #  singular name of the resource
     #
     # ```
-    # model.prefix     # => "model_"
-    # model.singular   # => "trait"
-    # model.collection # => "model_trait"
+    # resource.prefix     # => "model_"
+    # resource.singular   # => "trait"
+    # resource.collection # => "model_trait"
     # ```
     def collection : String
       "#{@prefix}#{@singular}"
     end
 
+    # Returns `String` of the resource base path, which equals the plural of the
+    #  resource or appended by the prefix if present
+    #
+    # Without prefix:
+    #
+    # ```
+    # resource.prefix    # => ""
+    # resource.singular  # => "trait"
+    # resource.base_path # => "trait"
+    # ```
+    #
+    # With prefix:
+    #
+    # ```
+    # resource.prefix    # => "model"
+    # resource.singular  # => "trait"
+    # resource.base_path # => "model/trait"
+    # ```
     def base_path : String
       if prefix.empty?
         plural
