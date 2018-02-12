@@ -25,6 +25,7 @@ module KemalJsonApi
     getter :actions, :singular, :prefix, :plural, :adapter
 
     # Returns the singular name of the resource
+    #
     # ```
     # model.singular # => "trait"
     # ```
@@ -33,6 +34,7 @@ module KemalJsonApi
     end
 
     # Returns the plural name of the resource
+    #
     # ```
     # model.plural # => "traits"
     # ```
@@ -41,6 +43,7 @@ module KemalJsonApi
     end
 
     # Returns the prefix string of the resource
+    #
     # ```
     # model.prefix # => "model_"
     # ```
@@ -50,6 +53,7 @@ module KemalJsonApi
 
     # Returns the collection name. Which is made up of prefix string and the
     #  singular name of the resource
+    #
     # ```
     # model.prefix     # => "model_"
     # model.singular   # => "trait"
@@ -67,14 +71,16 @@ module KemalJsonApi
       end
     end
 
-    # Should return a {String} contianing the id of the record created
+    # Should return a `String` contianing the id of the record created
+    #
     # ```
     # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"
     # ```
     abstract def create(data : JSON::Type) : String | Nil
 
-    # Should return a {Hash(String, JSON::Type)} object that contains the
-    #  record the {id} provided
+    # Should return a `Hash(String, JSON::Type)` object that contains the
+    #  record the id provided
+    #
     # ```
     # {
     #   "type":       "articles",
@@ -93,8 +99,9 @@ module KemalJsonApi
     # ```
     abstract def read(id : Int | String) : JSON::Type | Nil
 
-    # Should return an updated {Hash(String, JSON::Type)} object that contains the
+    # Should return an updated `Hash(String, JSON::Type)` object that contains the
     #  record and id that was updated
+    #
     # ```
     # {
     #   "type":       "articles",
@@ -114,12 +121,14 @@ module KemalJsonApi
     abstract def update(id : Int | String, args : JSON::Type) : JSON::Type | Nil
 
     # Will return true/false indicating if the record was deleted
+    #
     # ```
     # Model.new.delete(1) # => true
     # ```
     abstract def delete(id : Int | String) : Bool
 
     # Will return an array of JSON API resource objects
+    #
     # ```
     # [{
     #   "type":       "articles",

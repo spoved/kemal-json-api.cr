@@ -2,7 +2,8 @@ require "../resource"
 
 module KemalJsonApi
   class Resource::Mongo < KemalJsonApi::Resource
-    # Should return a {String} contianing the id of the record created
+    # Should return a `String` contianing the id of the record created
+    #
     # ```
     # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"
     # ```
@@ -24,8 +25,9 @@ module KemalJsonApi
       ret
     end
 
-    # Should return a {Hash(String, JSON::Type)} object that contains the
-    #  associated record to the {id} provided
+    # Should return a `Hash(String, JSON::Type)` object that contains the
+    #  associated record to the id provided
+    #
     # ```
     # {
     #   "type":       "articles",
@@ -49,8 +51,9 @@ module KemalJsonApi
       end
     end
 
-    # Should return an updated {Hash(String, JSON::Type)} object that contains the
+    # Should return an updated `Hash(String, JSON::Type)` object that contains the
     #  record and id that was updated
+    #
     # ```
     # {
     #   "type":       "articles",
@@ -80,6 +83,7 @@ module KemalJsonApi
 
     # Deletes the record identified by the provided id.
     #   Will return true/false indicating if the record was deleted
+    #
     # ```
     # Model.new.delete(1) # => true
     # ```
@@ -95,6 +99,7 @@ module KemalJsonApi
     end
 
     # Will return an array of JSON API resource objects
+    #
     # ```
     # [{
     #   "type":       "articles",
@@ -120,8 +125,9 @@ module KemalJsonApi
       results
     end
 
-    # Should return a {Hash(String, JSON::Type)} object that contains the
-    #  translated associated {BSON} object
+    # Should return a `Hash(String, JSON::Type)` object that contains the
+    #  translated associated `BSON` object
+    #
     # ```
     # {
     #   "type":       "articles",
@@ -147,8 +153,9 @@ module KemalJsonApi
       }
     end
 
-    # Should return a {Hash(String, JSON::Type)} object that contains the
+    # Should return a `Hash(String, JSON::Type)` object that contains the
     #  attributes of the object. Will strip the id or _id field
+    #
     # ```
     # {
     #   "title": "JSON API paints my bikeshed!",

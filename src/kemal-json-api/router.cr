@@ -7,7 +7,7 @@ module KemalJsonApi
     class_property :resources
     class_getter :handler
 
-    # A {NamedTuple} containing all information needed to generate a kemal route
+    # A `NamedTuple` containing all information needed to generate a kemal route
     alias PathInfo = NamedTuple(
       resource: KemalJsonApi::Resource,
       path: String,
@@ -28,7 +28,7 @@ module KemalJsonApi
       end
     end
 
-    # Will create a {PathInfo} containing all information needed to generate
+    # Will create a `PathInfo` containing all information needed to generate
     #  kemal routes
     private def self.create_path(resource : KemalJsonApi::Resource, action : KemalJsonApi::Action) : PathInfo
       case action.method
@@ -77,7 +77,7 @@ module KemalJsonApi
       end
     end
 
-    # Will create kemal route based on the path_info
+    # Will create kemal route based on the `PathInfo`
     private def self.create_route(path_info : PathInfo)
       case path_info[:action].type
       when ActionType::GET
@@ -226,8 +226,8 @@ module KemalJsonApi
       end
     end
 
-    # Will set env status_code and content_type, will return error json string
-    #  based on passed code
+    # Will set `HTTP::Server::Context` status_code and content_type, will return
+    #  error json stringbased on passed code
     private def self.error(env : HTTP::Server::Context, code : Int32) : String
       env.response.status_code = code
       env.response.content_type = "application/vnd.api+json"
