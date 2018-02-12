@@ -188,18 +188,10 @@ module KemalJsonApi
       else
         rels = {} of String => JSON::Type
         relations.each do |rel|
-          rels[rel.relation_name] = _gen_relation(id, rel)
+          rels[rel.relation_name] = gen_relation_object(id, rel)
         end
         rels
       end
-    end
-
-    # Will generate the relationship object for the provided id and relation
-    # http://jsonapi.org/format/#document-resource-object-relationships
-    protected def _gen_relation(id : String, relation : KemalJsonApi::Relation) : JSON::Type
-      JSON.parse({
-        "self" => "#{base_path}/#{id}/relationships/#{relation.relation_name}",
-      }.to_json).as_h
     end
   end
 end

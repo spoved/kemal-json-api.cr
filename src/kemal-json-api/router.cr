@@ -19,7 +19,7 @@ module KemalJsonApi
       @@resources.push resource
     end
 
-    def self.generate_routes!
+    def self.generate_routes! : Nil
       resources.each do |resource|
         resource.actions.each do |action|
           path_info = create_path(resource, action)
@@ -28,6 +28,7 @@ module KemalJsonApi
       end
 
       add_handler KemalJsonApi::Handler.new
+      nil
     end
 
     # Will create a `PathInfo` containing all information needed to generate

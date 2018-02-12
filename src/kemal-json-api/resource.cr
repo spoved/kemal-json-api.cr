@@ -183,5 +183,13 @@ module KemalJsonApi
         end
       end
     end
+
+    # Will generate the relationship object for the provided id and relation
+    # http://jsonapi.org/format/#document-resource-object-relationships
+    private def gen_relation_object(id : String, relation : KemalJsonApi::Relation) : JSON::Type
+      JSON.parse({
+        "self" => "#{base_path}/#{id}/relationships/#{relation.relation_name}",
+      }.to_json).as_h
+    end
   end
 end
