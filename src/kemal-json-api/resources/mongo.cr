@@ -145,11 +145,12 @@ module KemalJsonApi
     # }
     # ```
     protected def _gen_resource_object(doc : BSON) : JSON::Type
+      id = doc["_id"].to_s.chomp('\u0000')
       Hash(String, JSON::Type){
         "type"          => plural,
-        "id"            => doc["_id"].to_s.chomp('\u0000'),
+        "id"            => id,
         "attributes"    => _gen_attributes(doc),
-        "relationships" => _gen_relationships(doc),
+        "relationships" => _gen_relationships(id, doc),
       }
     end
 
@@ -172,15 +173,33 @@ module KemalJsonApi
     #
     # ```
     # {
-    #   "title": "JSON API paints my bikeshed!",
+    #   "author": {
+    #     "links": {
+    #       "self":    "/articles/1/relationships/author",
+    #       "related": "/articles/1/author",
+    #     },
+    #     "data": {"type": "people", "id": "9"},
+    #   },
     # }
     # ```
-    protected def _gen_relationships(hash : BSON) : JSON::Type
+    protected def _gen_relationships(id : String, hash : BSON) : JSON::Type
       if relations.empty?
         {} of String => JSON::Type
       else
-        {} of String => JSON::Type
+        rels = {} of String => JSON::Type
+        relations.each do |rel|
+          rels[rel.relation_name] = _gen_relation(id, rel)
+        end
+        rels
       end
+    end
+
+    # Will generate the relationship object for the provided id and relation
+    # http://jsonapi.org/format/#document-resource-object-relationships
+    protected def _gen_relation(id : String, relation : KemalJsonApi::Relation) : JSON::Type
+      JSON.parse({
+        "self" => "#{base_path}/#{id}/relationships/#{relation.relation_name}",
+      }.to_json).as_h
     end
   end
 end

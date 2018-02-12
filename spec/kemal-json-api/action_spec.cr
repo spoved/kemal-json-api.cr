@@ -48,7 +48,7 @@ describe KemalJsonApi do
 
     describe KemalJsonApi::ActionType::PUT do
       it "has value" do
-        KemalJsonApi::ActionType::PATCH.value.should_not be_nil
+        KemalJsonApi::ActionType::PUT.value.should_not be_nil
       end
     end
 
