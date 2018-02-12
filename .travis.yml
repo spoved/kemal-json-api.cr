@@ -8,3 +8,4 @@ script:
   - make
   - sudo make install
   - cd ..
+  - crystal spec
