@@ -51,8 +51,15 @@ module KemalJsonApi
       end
     end
 
-    # TODO: Finish
-    def read_relation(id : Int | String, relation : String) : JSON::Type | Nil
+    # Will return a Resource Identifier Object for a to-one relationship
+    #
+    # ```
+    # {
+    #   "type": "people",
+    #   "id":   "12",
+    # }
+    # ```
+    def read_relation(id : Int | String, relation : String) : KemalJsonApi::Resource::Identifier | Nil
       nil
     end
 
@@ -130,9 +137,26 @@ module KemalJsonApi
       results
     end
 
-    # TODO: Finish
-    def list_relations(id : Int | String, relation : String) : Array(JSON::Type)
-      results = [] of JSON::Type
+    # Return an array listing resource's to-many relationship of Resource
+    #   Identifier Objects
+    # http://jsonapi.org/format/#document-resource-identifier-objects
+    #
+    # With records
+    #
+    # ```
+    # [
+    #   {"type": "tags", "id": "2"},
+    #   {"type": "tags", "id": "3"},
+    # ]
+    # ```
+    #
+    # Without records
+    #
+    # ```
+    # []
+    # ```
+    def list_relations(id : Int | String, relation : String) : Array(KemalJsonApi::Resource::Identifier)
+      results = [] of KemalJsonApi::Resource::Identifier
     end
 
     # Should return a `Hash(String, JSON::Type)` object that contains the

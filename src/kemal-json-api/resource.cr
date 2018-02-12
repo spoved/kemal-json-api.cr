@@ -2,6 +2,7 @@ require "../ext/string"
 require "./action"
 require "./adapter"
 require "./relation"
+require "./resource/identifier"
 
 module KemalJsonApi
   # Abstract class to represent a JSON API resource object
@@ -124,7 +125,7 @@ module KemalJsonApi
     # ```
     abstract def read(id : Int | String) : JSON::Type | Nil
 
-    # Will return a relation object for a to-one relationship
+    # Will return a Resource Identifier Object for a to-one relationship
     #
     # ```
     # {
@@ -132,7 +133,7 @@ module KemalJsonApi
     #   "id":   "12",
     # }
     # ```
-    abstract def read_relation(id : Int | String, relation : String) : JSON::Type | Nil
+    abstract def read_relation(id : Int | String, relation : String) : Identifier | Nil
 
     # Should return an updated `Hash(String, JSON::Type)` object that contains the
     #  record and id that was updated
@@ -181,7 +182,9 @@ module KemalJsonApi
     # ```
     abstract def list : Array(JSON::Type)
 
-    # Return an array listing resource's to-many relationships
+    # Return an array listing resource's to-many relationship of Resource
+    #   Identifier Objects
+    # http://jsonapi.org/format/#document-resource-identifier-objects
     #
     # With records
     #
@@ -197,7 +200,7 @@ module KemalJsonApi
     # ```
     # []
     # ```
-    abstract def list_relations(id : Int | String, relation : String) : Array(JSON::Type)
+    abstract def list_relations(id : Int | String, relation : String) : Array(Identifier)
 
     # Will parse the paramaters provided in the `HTTP::Server::Context#request`
     def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Type)
