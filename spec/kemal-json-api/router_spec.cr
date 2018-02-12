@@ -4,8 +4,6 @@ require "../../src/kemal-json-api/macros/router"
 describe KemalJsonApi do
   describe KemalJsonApi::Router do
     context "with no resources" do
-      clear_resources
-
       describe ".resources" do
         it "has resources array" do
           KemalJsonApi::Router.resources.should_not be_nil
