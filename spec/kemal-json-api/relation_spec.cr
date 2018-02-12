@@ -62,14 +62,14 @@ describe KemalJsonApi do
         end
       end
 
-      describe "#relation_name" do
+      describe "#name" do
         it "returns correct name" do
           relation = KemalJsonApi::Relation.new(
             KemalJsonApi::RelationType::HAS_ONE,
             "trait"
           )
           relation.should_not be_nil
-          relation.relation_name.should eq "trait"
+          relation.name.should eq "trait"
         end
       end
     end
@@ -108,14 +108,14 @@ describe KemalJsonApi do
         end
       end
 
-      describe "#relation_name" do
+      describe "#name" do
         it "returns correct name" do
           relation = KemalJsonApi::Relation.new(
             KemalJsonApi::RelationType::BELONGS_TO,
             "trait"
           )
           relation.should_not be_nil
-          relation.relation_name.should eq "trait"
+          relation.name.should eq "trait"
         end
       end
     end
@@ -154,14 +154,14 @@ describe KemalJsonApi do
         end
       end
 
-      describe "#relation_name" do
+      describe "#name" do
         it "returns correct name" do
           relation = KemalJsonApi::Relation.new(
             KemalJsonApi::RelationType::HAS_MANY,
             "trait"
           )
           relation.should_not be_nil
-          relation.relation_name.should eq "traits"
+          relation.name.should eq "traits"
         end
       end
     end
@@ -200,14 +200,14 @@ describe KemalJsonApi do
         end
       end
 
-      describe "#relation_name" do
+      describe "#name" do
         it "returns correct name" do
           relation = KemalJsonApi::Relation.new(
             KemalJsonApi::RelationType::HAS_AND_BELONGS_TO_MANY,
             "trait"
           )
           relation.should_not be_nil
-          relation.relation_name.should eq "traits"
+          relation.name.should eq "traits"
         end
       end
     end

@@ -208,7 +208,7 @@ module KemalJsonApi
     # http://jsonapi.org/format/#document-resource-object-relationships
     private def gen_relation_object(id : String, relation : KemalJsonApi::Relation) : JSON::Type
       JSON.parse({
-        "self" => "#{base_path}/#{id}/relationships/#{relation.relation_name}",
+        "self" => "/#{base_path}/#{id}/relationships/#{relation.name}",
       }.to_json).as_h
     end
   end

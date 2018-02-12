@@ -188,7 +188,7 @@ module KemalJsonApi
       else
         rels = {} of String => JSON::Type
         relations.each do |rel|
-          rels[rel.relation_name] = gen_relation_object(id, rel)
+          rels[rel.name] = gen_relation_object(id, rel)
         end
         rels
       end
