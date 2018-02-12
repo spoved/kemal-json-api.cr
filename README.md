@@ -1,6 +1,6 @@
 # kemal-json-api [![Build Status](https://travis-ci.org/spoved/kemal-json-api.svg?branch=master)](https://travis-ci.org/spoved/kemal-json-api)
 
-A Crystal library to create REST API with Kemal.
+A Crystal library to create JSON API with Kemal.
 
 See [examples](https://github.com/spoved/kemal-json-api/tree/master/examples) folder for **mongo** samples.
 
