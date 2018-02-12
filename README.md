@@ -31,6 +31,7 @@ end
 module WebApp
   KemalJsonApi::Router.add MyModel.new(mongodb, actions: KemalJsonApi::ALL_ACTIONS, prefix: "api", singular: "item")
   KemalJsonApi::Router.generate_routes!
+  add_handler KemalJsonApi::Handler.new
   Kemal.run
 end
 ```
@@ -43,6 +44,25 @@ GET    /api/items/:id
 POST   /api/items
 PATCH  /api/items/:id
 DELETE /api/items/:id
+```
+
+## Macro
+kemal-json-api also has a macro that can be used to shortcut creating routes
+
+```ruby
+require "mongo"
+require "kemal"
+require "../src/kemal-json-api/macros/router"
+
+mongodb = KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
+
+module WebApp
+  json_api_resource "trait", mongodb
+
+  KemalJsonApi::Router.generate_routes!
+  add_handler KemalJsonApi::Handler.new
+  Kemal.run
+end
 ```
 
 ## KemalJsonApi::Resource options
