@@ -144,12 +144,12 @@ module KemalJsonApi
     #   },
     # }
     # ```
-    def _gen_resource_object(doc : BSON) : JSON::Type
+    protected def _gen_resource_object(doc : BSON) : JSON::Type
       Hash(String, JSON::Type){
         "type"          => plural,
         "id"            => doc["_id"].to_s.chomp('\u0000'),
         "attributes"    => _gen_attributes(doc),
-        "relationships" => {} of String => JSON::Type,
+        "relationships" => _gen_relationships(doc),
       }
     end
 
@@ -161,10 +161,26 @@ module KemalJsonApi
     #   "title": "JSON API paints my bikeshed!",
     # }
     # ```
-    def _gen_attributes(hash : BSON) : JSON::Type | Nil
+    protected def _gen_attributes(hash : BSON) : JSON::Type | Nil
       json = JSON.parse(hash.to_json).as_h
       json.delete_if { |key, value| key =~ /^(id|_id)$/ }
       json
+    end
+
+    # Should return a `Hash(String, JSON::Type)` object that contains the
+    #  relationships of the object
+    #
+    # ```
+    # {
+    #   "title": "JSON API paints my bikeshed!",
+    # }
+    # ```
+    protected def _gen_relationships(hash : BSON) : JSON::Type
+      if relations.empty?
+        {} of String => JSON::Type
+      else
+        {} of String => JSON::Type
+      end
     end
   end
 end

@@ -1,6 +1,7 @@
 require "../ext/string"
 require "./action"
 require "./adapter"
+require "./relation"
 
 module KemalJsonApi
   # Abstract class to represent a JSON API resource object
@@ -12,17 +13,23 @@ module KemalJsonApi
     @plural : String
     @prefix : String
     @adapter : KemalJsonApi::Adapter
+    @relations = [] of KemalJsonApi::Relation
 
     alias ActionsList = Hash(ActionMethod, ActionType)
 
-    def initialize(@adapter : KemalJsonApi::Adapter, *args, actions : ActionsList = ALL_ACTIONS, plural : String = "", prefix : String = "", singular : String = "")
+    def initialize(@adapter : KemalJsonApi::Adapter, *args,
+                   actions : ActionsList = ALL_ACTIONS,
+                   plural : String = "",
+                   prefix : String = "",
+                   singular : String = "",
+                   @relations : Array(KemalJsonApi::Relation) = [] of KemalJsonApi::Relation)
       @singular = singular.empty? ? self.class.name.underscore : singular.underscore
       @plural = plural.empty? ? @singular.pluralize : plural.underscore
       @prefix = prefix.underscore
       setup_actions! actions
     end
 
-    getter :actions, :singular, :prefix, :plural, :adapter
+    getter :actions, :singular, :prefix, :plural, :adapter, :relations
 
     # Returns the singular name of the resource
     #
