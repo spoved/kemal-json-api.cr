@@ -153,6 +153,7 @@ module KemalJsonApi
     # ```
     abstract def list : Array(JSON::Type)
 
+    # Will parse the paramaters provided in the `HTTP::Server::Context#request`
     def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Type)
       begin
         data = Hash(String, JSON::Type).new
@@ -170,6 +171,7 @@ module KemalJsonApi
       end
     end
 
+    # Will set up action associations for the resource
     protected def setup_actions!(actions = {} of Action::Method => Action::MethodType)
       if !actions || actions.empty?
         @actions.push Action.new(ActionMethod::CREATE, ActionType::POST)
