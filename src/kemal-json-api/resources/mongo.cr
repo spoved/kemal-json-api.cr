@@ -60,6 +60,12 @@ module KemalJsonApi
     # }
     # ```
     def read_relation(id : Int | String, relation : String) : KemalJsonApi::Resource::Identifier | Nil
+      adapter.with_collection(collection) do |coll|
+        record = coll.find_one({"_id" => BSON::ObjectId.new(id)})
+        if record && record["#{relation}_id"]
+          return KemalJsonApi::Resource::Identifier.new(relation, record["#{relation}_id"].to_s)
+        end
+      end
       nil
     end
 
@@ -157,6 +163,18 @@ module KemalJsonApi
     # ```
     def list_relations(id : Int | String, relation : String) : Array(KemalJsonApi::Resource::Identifier)
       results = [] of KemalJsonApi::Resource::Identifier
+      adapter.with_collection(collection) do |coll|
+        doc = coll.find_one({"_id" => BSON::ObjectId.new(id)})
+        next unless doc
+        record = _gen_attributes(doc)
+
+        if record && record[relation] && record[relation].is_a? Array(JSON::Type)
+          record[relation].as(Array(JSON::Type)).each do |rel_id|
+            results << KemalJsonApi::Resource::Identifier.new(relation, rel_id.to_s)
+          end
+        end
+      end
+      results
     end
 
     # Should return a `Hash(String, JSON::Type)` object that contains the

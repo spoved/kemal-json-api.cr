@@ -92,13 +92,14 @@ module KemalJsonApi
         id = env.params.url["id"]
         relation = env.route.path.to_s.split("/").last
 
+
         ret = path_info[:resource].list_relations(id, relation)
         env.response.status_code = 200
         env.response.content_type = "application/vnd.api+json"
         env.response.headers["Connection"] = "close"
         {
           links: {
-            self: env.route.path,
+            self: env.request.path,
           },
           data: ret,
         }.to_json
