@@ -206,6 +206,12 @@ module KemalJsonApi
     # ```
     abstract def list_relation_identifiers(id : Int | String, relation : String) : Array(Identifier)
 
+    # TODO: Complete this
+    abstract def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : JSON::Type | Nil
+
+    # TODO: Complete this
+    abstract def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(JSON::Type)
+
     # Will parse the paramaters provided in the `HTTP::Server::Context#request`
     def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Type)
       begin

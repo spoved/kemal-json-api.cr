@@ -181,6 +181,16 @@ module KemalJsonApi
       results
     end
 
+    # TODO: Complete this
+    private def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : JSON::Type | Nil
+      nil
+    end
+
+    # TODO: Complete this
+    private def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(JSON::Type)
+      [] of String => JSON::Type
+    end
+
     # Should return a `Hash(String, JSON::Type)` object that contains the
     #  translated associated `BSON` object
     #

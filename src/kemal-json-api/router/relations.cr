@@ -105,6 +105,16 @@ module KemalJsonApi
           data: ret,
         }.to_json
       end
+
+      # TODO: Complete this
+      private def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : String
+        ""
+      end
+
+      # TODO: Complete this
+      private def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : String
+        ""
+      end
     end
   end
 end
