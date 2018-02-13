@@ -125,16 +125,6 @@ module KemalJsonApi
     # ```
     abstract def read(id : Int | String) : JSON::Type | Nil
 
-    # Will return a Resource Identifier Object for a to-one relationship
-    #
-    # ```
-    # {
-    #   "type": "people",
-    #   "id":   "12",
-    # }
-    # ```
-    abstract def read_relation(id : Int | String, relation : String) : Identifier | Nil
-
     # Should return an updated `Hash(String, JSON::Type)` object that contains the
     #  record and id that was updated
     #
@@ -182,6 +172,20 @@ module KemalJsonApi
     # ```
     abstract def list : Array(JSON::Type)
 
+    #####################
+    # Relation functions
+    #####################
+
+    # Will return a Resource Identifier Object for a to-one relationship
+    #
+    # ```
+    # {
+    #   "type": "people",
+    #   "id":   "12",
+    # }
+    # ```
+    abstract def read_relation_identifier(id : Int | String, relation : String) : Identifier | Nil
+
     # Return an array listing resource's to-many relationship of Resource
     #   Identifier Objects
     # http://jsonapi.org/format/#document-resource-identifier-objects
@@ -200,7 +204,7 @@ module KemalJsonApi
     # ```
     # []
     # ```
-    abstract def list_relations(id : Int | String, relation : String) : Array(Identifier)
+    abstract def list_relation_identifiers(id : Int | String, relation : String) : Array(Identifier)
 
     # Will parse the paramaters provided in the `HTTP::Server::Context#request`
     def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Type)

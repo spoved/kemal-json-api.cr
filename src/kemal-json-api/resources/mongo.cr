@@ -51,24 +51,6 @@ module KemalJsonApi
       end
     end
 
-    # Will return a Resource Identifier Object for a to-one relationship
-    #
-    # ```
-    # {
-    #   "type": "people",
-    #   "id":   "12",
-    # }
-    # ```
-    def read_relation(id : Int | String, relation : String) : KemalJsonApi::Resource::Identifier | Nil
-      adapter.with_collection(collection) do |coll|
-        record = coll.find_one({"_id" => BSON::ObjectId.new(id)})
-        if record && record["#{relation}_id"]
-          return KemalJsonApi::Resource::Identifier.new(relation, record["#{relation}_id"].to_s)
-        end
-      end
-      nil
-    end
-
     # Should return an updated `Hash(String, JSON::Type)` object that contains the
     #  record and id that was updated
     #
@@ -143,6 +125,28 @@ module KemalJsonApi
       results
     end
 
+    #####################
+    # Relation functions
+    #####################
+
+    # Will return a Resource Identifier Object for a to-one relationship
+    #
+    # ```
+    # {
+    #   "type": "people",
+    #   "id":   "12",
+    # }
+    # ```
+    def read_relation_identifier(id : Int | String, relation : String) : KemalJsonApi::Resource::Identifier | Nil
+      adapter.with_collection(collection) do |coll|
+        record = coll.find_one({"_id" => BSON::ObjectId.new(id)})
+        if record && record["#{relation}_id"]
+          return KemalJsonApi::Resource::Identifier.new(relation, record["#{relation}_id"].to_s)
+        end
+      end
+      nil
+    end
+
     # Return an array listing resource's to-many relationship of Resource
     #   Identifier Objects
     # http://jsonapi.org/format/#document-resource-identifier-objects
@@ -161,7 +165,7 @@ module KemalJsonApi
     # ```
     # []
     # ```
-    def list_relations(id : Int | String, relation : String) : Array(KemalJsonApi::Resource::Identifier)
+    def list_relation_identifiers(id : Int | String, relation : String) : Array(KemalJsonApi::Resource::Identifier)
       results = [] of KemalJsonApi::Resource::Identifier
       adapter.with_collection(collection) do |coll|
         doc = coll.find_one({"_id" => BSON::ObjectId.new(id)})

@@ -35,7 +35,7 @@ module KemalJsonApi
         resource.relations.each do |rel|
           if rel.type == KemalJsonApi::RelationType::HAS_ONE ||
              rel.type == KemalJsonApi::RelationType::BELONGS_TO
-            path_info = create_relation_path(resource, rel,
+            path_info = create_relation_self_path(resource, rel,
               KemalJsonApi::Action.new(
                 KemalJsonApi::ActionMethod::READ, KemalJsonApi::ActionType::GET
               )
@@ -43,7 +43,7 @@ module KemalJsonApi
             create_route(path_info) unless path_info[:path].empty?
           elsif rel.type == KemalJsonApi::RelationType::HAS_MANY ||
                 rel.type == KemalJsonApi::RelationType::HAS_AND_BELONGS_TO_MANY
-            path_info = create_relation_path(resource, rel,
+            path_info = create_relation_self_path(resource, rel,
               KemalJsonApi::Action.new(
                 KemalJsonApi::ActionMethod::LIST, KemalJsonApi::ActionType::GET
               )
