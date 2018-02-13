@@ -1,6 +1,8 @@
 require "../ext/string"
 require "./action"
 require "./adapter"
+require "./relation"
+require "./resource/identifier"
 
 module KemalJsonApi
   # Abstract class to represent a JSON API resource object
@@ -12,22 +14,28 @@ module KemalJsonApi
     @plural : String
     @prefix : String
     @adapter : KemalJsonApi::Adapter
+    @relations = [] of KemalJsonApi::Relation
 
     alias ActionsList = Hash(ActionMethod, ActionType)
 
-    def initialize(@adapter : KemalJsonApi::Adapter, *args, actions : ActionsList = ALL_ACTIONS, plural : String = "", prefix : String = "", singular : String = "")
+    def initialize(@adapter : KemalJsonApi::Adapter, *args,
+                   actions : ActionsList = ALL_ACTIONS,
+                   plural : String = "",
+                   prefix : String = "",
+                   singular : String = "",
+                   @relations : Array(KemalJsonApi::Relation) = [] of KemalJsonApi::Relation)
       @singular = singular.empty? ? self.class.name.underscore : singular.underscore
       @plural = plural.empty? ? @singular.pluralize : plural.underscore
       @prefix = prefix.underscore
       setup_actions! actions
     end
 
-    getter :actions, :singular, :prefix, :plural, :adapter
+    getter :actions, :singular, :prefix, :plural, :adapter, :relations
 
     # Returns the singular name of the resource
     #
     # ```
-    # model.singular # => "trait"
+    # resource.singular # => "trait"
     # ```
     def singular : String
       @singular
@@ -36,7 +44,7 @@ module KemalJsonApi
     # Returns the plural name of the resource
     #
     # ```
-    # model.plural # => "traits"
+    # resource.plural # => "traits"
     # ```
     def plural : String
       @plural
@@ -45,7 +53,7 @@ module KemalJsonApi
     # Returns the prefix string of the resource
     #
     # ```
-    # model.prefix # => "model_"
+    # resource.prefix # => "model_"
     # ```
     def prefix : String
       @prefix
@@ -55,14 +63,32 @@ module KemalJsonApi
     #  singular name of the resource
     #
     # ```
-    # model.prefix     # => "model_"
-    # model.singular   # => "trait"
-    # model.collection # => "model_trait"
+    # resource.prefix     # => "model_"
+    # resource.singular   # => "trait"
+    # resource.collection # => "model_trait"
     # ```
     def collection : String
       "#{@prefix}#{@singular}"
     end
 
+    # Returns `String` of the resource base path, which equals the plural of the
+    #  resource or appended by the prefix if present
+    #
+    # Without prefix:
+    #
+    # ```
+    # resource.prefix    # => ""
+    # resource.singular  # => "trait"
+    # resource.base_path # => "trait"
+    # ```
+    #
+    # With prefix:
+    #
+    # ```
+    # resource.prefix    # => "model"
+    # resource.singular  # => "trait"
+    # resource.base_path # => "model/trait"
+    # ```
     def base_path : String
       if prefix.empty?
         plural
@@ -146,6 +172,47 @@ module KemalJsonApi
     # ```
     abstract def list : Array(JSON::Type)
 
+    #####################
+    # Relation functions
+    #####################
+
+    # Will return a Resource Identifier Object for a to-one relationship
+    #
+    # ```
+    # {
+    #   "type": "people",
+    #   "id":   "12",
+    # }
+    # ```
+    abstract def read_relation_identifier(id : Int | String, relation : String) : Identifier | Nil
+
+    # Return an array listing resource's to-many relationship of Resource
+    #   Identifier Objects
+    # http://jsonapi.org/format/#document-resource-identifier-objects
+    #
+    # With records
+    #
+    # ```
+    # [
+    #   {"type": "tags", "id": "2"},
+    #   {"type": "tags", "id": "3"},
+    # ]
+    # ```
+    #
+    # Without records
+    #
+    # ```
+    # []
+    # ```
+    abstract def list_relation_identifiers(id : Int | String, relation : String) : Array(Identifier)
+
+    # TODO: Complete this
+    abstract def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : JSON::Type | Nil
+
+    # TODO: Complete this
+    abstract def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(JSON::Type)
+
+    # Will parse the paramaters provided in the `HTTP::Server::Context#request`
     def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Type)
       begin
         data = Hash(String, JSON::Type).new
@@ -163,6 +230,7 @@ module KemalJsonApi
       end
     end
 
+    # Will set up action associations for the resource
     protected def setup_actions!(actions = {} of Action::Method => Action::MethodType)
       if !actions || actions.empty?
         @actions.push Action.new(ActionMethod::CREATE, ActionType::POST)
@@ -175,6 +243,14 @@ module KemalJsonApi
           @actions.push Action.new(k, v)
         end
       end
+    end
+
+    # Will generate the relationship object for the provided id and relation
+    # http://jsonapi.org/format/#document-resource-object-relationships
+    private def gen_relation_object(id : String, relation : KemalJsonApi::Relation) : JSON::Type
+      JSON.parse({
+        "self" => "/#{base_path}/#{id}/relationships/#{relation.name}",
+      }.to_json).as_h
     end
   end
 end

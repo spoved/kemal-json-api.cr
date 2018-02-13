@@ -4,6 +4,7 @@ require "./ext/string"
 require "./kemal-json-api/*"
 require "./kemal-json-api/adapters/*"
 require "./kemal-json-api/resources/*"
+require "./kemal-json-api/router/*"
 
 module KemalJsonApi
   DEBUG = false

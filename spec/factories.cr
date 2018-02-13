@@ -87,6 +87,14 @@ class TestResource < KemalJsonApi::Resource
     }.to_json).as_h
   end
 
+  def read_relation(id : Int | String, relation : String) : Identifier | Nil
+    nil
+  end
+
+  def list_relations(id : Int | String, relation : String) : Array(Identifier)
+    [] of Identifier
+  end
+
   def update(id : Int | String, args : JSON::Type) : JSON::Type | Nil
     JSON.parse({
       "type":       "articles",

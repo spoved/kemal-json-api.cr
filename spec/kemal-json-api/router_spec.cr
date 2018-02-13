@@ -33,7 +33,6 @@ describe KemalJsonApi do
           json_api_resource "character", adapter
           KemalJsonApi::Router.resources.empty?.should be_false
           KemalJsonApi::Router.generate_routes!
-          add_handler KemalJsonApi::Handler.new
           Kemal.run
         end
 

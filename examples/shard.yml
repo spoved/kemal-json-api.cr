@@ -6,7 +6,7 @@ dependencies:
   kemal:
     github: kemalcr/kemal
   kemal-json-api:
-    github: spoved/kemal-json-api
+    github: spoved/kemal-json-api.cr
   mongo:
     github: sam0x17/mongo.cr
     branch: master
