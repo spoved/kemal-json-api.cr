@@ -1,8 +1,8 @@
-# kemal-json-api [![Build Status](https://travis-ci.org/spoved/kemal-json-api.svg?branch=master)](https://travis-ci.org/spoved/kemal-json-api)
+# kemal-json-api [![Build Status](https://travis-ci.org/spoved/kemal-json-api.cr.svg?branch=master)](https://travis-ci.org/spoved/kemal-json-api.cr)
 
 A Crystal library to create REST API with Kemal.
 
-See [examples](https://github.com/spoved/kemal-json-api/tree/master/examples) folder for **mongo** samples.
+See [examples](https://github.com/spoved/kemal-json-api.cr/tree/master/examples) folder for **mongo** samples.
 
 **NOTE**: this is a *beta* version, a lot of features and security improvements need to be implemented actually
 
@@ -13,7 +13,7 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   kemal-json-api:
-    github: spoved/kemal-json-api
+    github: spoved/kemal-json-api.cr
 ```
 
 ## Usage
@@ -53,7 +53,7 @@ DELETE /api/items/:id
 
 ## More examples
 
-See [examples](https://github.com/spoved/kemal-json-api/tree/master/examples) folder.
+See [examples](https://github.com/spoved/kemal-json-api.cr/tree/master/examples) folder.
 
 ## Notes
 
