@@ -217,7 +217,27 @@ module KemalJsonApi
     protected def _gen_attributes(hash : BSON) : JSON::Type | Nil
       json = JSON.parse(hash.to_json).as_h
       json.delete_if { |key, value| key =~ /^(id|_id)$/ }
+      _strip_relation(json)
       json
+    end
+
+    # Will strip the provided hash of any relationship keys
+    protected def _strip_relation(json : Hash(String, JSON::Type)) : Nil
+      if !self.relations.empty?
+        self.relations.each do |rel|
+          case rel.type
+          when KemalJsonApi::RelationType::BELONGS_TO
+            json.delete_if { |key, value| key =~ /^#{rel.name}_id$/ }
+          when KemalJsonApi::RelationType::HAS_ONE
+            json.delete_if { |key, value| key =~ /^#{rel.name}_id$/ }
+          when KemalJsonApi::RelationType::HAS_MANY
+            json.delete_if { |key, value| key =~ /^#{rel.name}$/ }
+          when KemalJsonApi::RelationType::HAS_AND_BELONGS_TO_MANY
+            json.delete_if { |key, value| key =~ /^#{rel.name}$/ }
+          end
+        end
+      end
+      nil
     end
 
     # Should return a `Hash(String, JSON::Type)` object that contains the

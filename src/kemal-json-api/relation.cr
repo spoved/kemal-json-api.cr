@@ -16,7 +16,8 @@ module KemalJsonApi
     def initialize(@type : KemalJsonApi::RelationType, @resource : String)
     end
 
-    # Will pluralize resource based on `KemalJsonApi::RelationType`
+    # Will return a singular or pluralized resource name
+    #  based on `KemalJsonApi::RelationType`
     def name : String
       case self.type
       when KemalJsonApi::RelationType::BELONGS_TO
