@@ -131,4 +131,20 @@ class TestResource < KemalJsonApi::Resource
       },
     }].to_json).as_a
   end
+
+  def read_relation_identifier(id : Int | String, relation : String) : Identifier | Nil
+    nil
+  end
+
+  def list_relation_identifiers(id : Int | String, relation : String) : Array(Identifier)
+    [] of KemalJsonApi::Resource::Identifier
+  end
+
+  def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : JSON::Type | Nil
+    nil
+  end
+
+  def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(JSON::Type)
+    [] of JSON::Type
+  end
 end

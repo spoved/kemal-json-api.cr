@@ -188,7 +188,7 @@ module KemalJsonApi
 
     # TODO: Complete this
     private def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(JSON::Type)
-      [] of String => JSON::Type
+      [] of JSON::Type
     end
 
     # Should return a `Hash(String, JSON::Type)` object that contains the
