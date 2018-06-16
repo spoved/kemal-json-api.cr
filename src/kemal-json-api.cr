@@ -1,6 +1,6 @@
 require "kemal"
 require "uuid"
-require "./ext/string"
+require "./ext/*"
 require "./kemal-json-api/*"
 require "./kemal-json-api/adapters/*"
 require "./kemal-json-api/resources/*"

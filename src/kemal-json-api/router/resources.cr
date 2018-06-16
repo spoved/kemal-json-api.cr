@@ -55,9 +55,9 @@ module KemalJsonApi
         id = env.params.url["id"]
         updated = false
         data = path_info[:resource].prepare_params(env)
-        if data.has_key?("data") && data["data"].as(Hash(String, JSON::Type)).has_key?("type")
-          args = data["data"].as(Hash(String, JSON::Type))
-          updated = path_info[:resource].update id, args["attributes"].as(Hash(String, JSON::Type))
+        if data.has_key?("data") && data["data"].as_h.has_key?("type")
+          args = data["data"].as_h
+          updated = path_info[:resource].update(id, args["attributes"].as_h)
         end
 
         env.response.content_type = "application/vnd.api+json"
@@ -127,9 +127,9 @@ module KemalJsonApi
       private def create_resource(env : HTTP::Server::Context, path_info : PathInfo) : String
         # TODO: let pass only valid fields
         data = path_info[:resource].prepare_params(env)
-        if data.has_key?("data") && data["data"].as(Hash(String, JSON::Type)).has_key?("type")
-          args = data["data"].as(Hash(String, JSON::Type))
-          id = path_info[:resource].create args["attributes"].as(Hash(String, JSON::Type))
+        if data.has_key?("data") && data["data"].as_h.has_key?("type")
+          args = data["data"].as_h
+          id = path_info[:resource].create(args["attributes"].as_h)
         end
 
         env.response.content_type = "application/vnd.api+json"

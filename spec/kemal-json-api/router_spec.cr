@@ -81,7 +81,7 @@ describe KemalJsonApi do
             json["data"].should_not be_nil
             hash = json["data"].as_h
             hash["type"].should eq "characters"
-            attrs = hash["attributes"].as(Hash(String, JSON::Type))
+            attrs = hash["attributes"].as_h
             attrs["name"].should eq "Ringo"
           end
         end
@@ -93,16 +93,16 @@ describe KemalJsonApi do
             json["data"].should_not be_nil
             hash = json["data"].as_h
             hash["type"].should eq "characters"
-            attrs = hash["attributes"].as(Hash(String, JSON::Type))
+            attrs = hash["attributes"].as_h
             attrs["name"].should eq "Ringo"
-            id = hash["id"].as(String)
+            id = hash["id"].as_s
 
             update = patch_characters(id, Hash(String, String){"name" => "Dingo"})
             update.should_not be_nil
             update["data"].should_not be_nil
             hash = update["data"].as_h
             hash["type"].should eq "characters"
-            attrs = hash["attributes"].as(Hash(String, JSON::Type))
+            attrs = hash["attributes"].as_h
             attrs["name"].should eq "Dingo"
             attrs["age"].should eq "44"
           end
@@ -115,9 +115,9 @@ describe KemalJsonApi do
             json["data"].should_not be_nil
             hash = json["data"].as_h
             hash["type"].should eq "characters"
-            attrs = hash["attributes"].as(Hash(String, JSON::Type))
+            attrs = hash["attributes"].as_h
             attrs["name"].should eq "Ringo"
-            id = hash["id"].as(String)
+            id = hash["id"].as_s
 
             delete_characters(id).should eq 200
           end

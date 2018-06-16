@@ -7,7 +7,7 @@ module KemalJsonApi
     # ```
     # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"
     # ```
-    def create(data : JSON::Type) : String | Nil
+    def create(data : Hash(String, JSON::Any)) : String | Nil
       ret = nil
       adapter.with_collection(collection) do |coll|
         doc = data.to_bson
@@ -44,7 +44,7 @@ module KemalJsonApi
     #   },
     # }
     # ```
-    def read(id : Int | String) : JSON::Type | Nil
+    def read(id : Int | String) : KemalJsonApi::Resource::Data
       adapter.with_collection(collection) do |coll|
         record = coll.find_one({"_id" => BSON::ObjectId.new(id)})
         return _gen_resource_object(record) if record
@@ -70,13 +70,13 @@ module KemalJsonApi
     #   },
     # }
     # ```
-    def update(id : Int | String, args : JSON::Type) : Bool
+    def update(id : Int | String, args : Hash(String, JSON::Any)) : KemalJsonApi::Resource::Data
       adapter.with_collection(collection) do |coll|
         coll.update({"_id" => BSON::ObjectId.new(id)}, {"$set" => args})
         if (err = coll.last_error)
-          return err["nModified"] == 1 ? true : false
+          return err["nModified"] == 1 ? read(id) : nil
         else
-          return false
+          return nil
         end
       end
     end
@@ -115,8 +115,8 @@ module KemalJsonApi
     #   },
     # }]
     # ```
-    def list : Array(JSON::Type)
-      results = [] of JSON::Type
+    def list : Array(KemalJsonApi::Resource::Data)
+      results = [] of KemalJsonApi::Resource::Data
       adapter.with_collection(collection) do |coll|
         coll.find(BSON.new) do |doc|
           results << _gen_resource_object(doc)
@@ -172,8 +172,8 @@ module KemalJsonApi
         next unless doc
         record = _gen_attributes(doc)
 
-        if record && record[relation] && record[relation].is_a? Array(JSON::Type)
-          record[relation].as(Array(JSON::Type)).each do |rel_id|
+        if record && record[relation] && record[relation].is_a? Array(JSON::Any)
+          record[relation].as(Array(JSON::Any)).each do |rel_id|
             results << KemalJsonApi::Resource::Identifier.new(relation, rel_id.to_s)
           end
         end
@@ -182,13 +182,13 @@ module KemalJsonApi
     end
 
     # TODO: Complete this
-    private def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : JSON::Type | Nil
+    private def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : KemalJsonApi::Resource::Data
       nil
     end
 
     # TODO: Complete this
-    private def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(JSON::Type)
-      [] of JSON::Type
+    private def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(KemalJsonApi::Resource::Data)
+      [] of KemalJsonApi::Resource::Data
     end
 
     # Should return a `Hash(String, JSON::Type)` object that contains the
@@ -210,13 +210,13 @@ module KemalJsonApi
     #   },
     # }
     # ```
-    protected def _gen_resource_object(doc : BSON) : JSON::Type
+    protected def _gen_resource_object(doc : BSON) : KemalJsonApi::Resource::Data
       id = doc["_id"].to_s.chomp('\u0000')
-      Hash(String, JSON::Type){
-        "type"          => plural,
-        "id"            => id,
-        "attributes"    => _gen_attributes(doc),
-        "relationships" => _gen_relationships(id, doc),
+      {
+        type:          plural,
+        id:            id,
+        attributes:    _gen_attributes(doc),
+        relationships: _gen_relationships(id, doc),
       }
     end
 
@@ -228,7 +228,7 @@ module KemalJsonApi
     #   "title": "JSON API paints my bikeshed!",
     # }
     # ```
-    protected def _gen_attributes(hash : BSON) : JSON::Type | Nil
+    protected def _gen_attributes(hash : BSON) : JSON::Any::Type
       json = JSON.parse(hash.to_json).as_h
       json.delete_if { |key, value| key =~ /^(id|_id)$/ }
       _strip_relation(json)
@@ -236,7 +236,7 @@ module KemalJsonApi
     end
 
     # Will strip the provided hash of any relationship keys
-    protected def _strip_relation(json : Hash(String, JSON::Type)) : Nil
+    protected def _strip_relation(json : Hash(String, ::JSON::Any)) : Nil
       if !self.relations.empty?
         self.relations.each do |rel|
           case rel.type
@@ -268,13 +268,13 @@ module KemalJsonApi
     #   },
     # }
     # ```
-    protected def _gen_relationships(id : String, hash : BSON) : JSON::Type
+    protected def _gen_relationships(id : String, hash : BSON) : JSON::Any::Type
       if relations.empty?
-        {} of String => JSON::Type
+        {} of String => JSON::Any
       else
-        rels = {} of String => JSON::Type
+        rels = {} of String => JSON::Any
         relations.each do |rel|
-          rels[rel.name] = gen_relation_object(id, rel)
+          rels[rel.name] = JSON::Any.new(gen_relation_object(id, rel))
         end
         rels
       end
