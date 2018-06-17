@@ -1,12 +1,13 @@
-services:
-  - mongodb
 language: crystal
+services:
+- mongodb
+install:
+- git clone https://github.com/mongodb/mongo-c-driver.git
+- cd mongo-c-driver
+- cmake -DBUILD_SHARED_LIBS=ON
+- make
+- sudo make install
+- cd ..
+- shards install
 script:
-  - git clone https://github.com/mongodb/mongo-c-driver.git
-  - cd mongo-c-driver
-  - cmake -DBUILD_SHARED_LIBS=ON
-  - make
-  - sudo make install
-  - cd ..
-  - shards install
-  - LD_LIBRARY_PATH=/usr/local/lib crystal spec
+- LD_LIBRARY_PATH=/usr/local/lib crystal spec
