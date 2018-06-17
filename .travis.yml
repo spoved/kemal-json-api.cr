@@ -8,4 +8,5 @@ script:
   - make
   - sudo make install
   - cd ..
-  - LD_LIBRARY_PATH=/usr/local/lib KEMAL_ENV=test crystal spec
+  - shards install
+  - LD_LIBRARY_PATH=/usr/local/lib crystal spec
