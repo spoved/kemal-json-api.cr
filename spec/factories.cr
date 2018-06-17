@@ -66,25 +66,25 @@ end
 
 # :nodoc:
 class TestResource < KemalJsonApi::Resource
-  def create(data : JSON::Type) : String | Nil
+  def create(data : Hash(String, JSON::Any)) : String | Nil
     "550e8400-e29b-41d4-a716-446655440000"
   end
 
-  def read(id : Int | String) : JSON::Type | Nil
-    JSON.parse({
-      "type":       "articles",
-      "id":         "1",
-      "attributes": {
-        "title": "JSON API paints my bikeshed!",
+  def read(id : Int | String) : KemalJsonApi::Resource::Data
+    {
+      type:       "articles",
+      id:         "1",
+      attributes: {
+        "title" => JSON::Any.new("JSON API paints my bikeshed!"),
       },
-      "relationships": {
-        "author": {
-          "links": {
-            "related": "http://example.com/articles/1/author",
+      relationships: {
+        "author" => JSON.parse({
+          "links" => {
+            "related" => "http://example.com/articles/1/author",
           },
-        },
+        }.to_json),
       },
-    }.to_json).as_h
+    }
   end
 
   def read_relation(id : Int | String, relation : String) : Identifier | Nil
@@ -95,40 +95,65 @@ class TestResource < KemalJsonApi::Resource
     [] of Identifier
   end
 
-  def update(id : Int | String, args : JSON::Type) : JSON::Type | Nil
-    JSON.parse({
-      "type":       "articles",
-      "id":         "1",
-      "attributes": {
-        "title": "JSON API paints my bikeshed!",
+  def update(id : Int | String, args : Hash(String, JSON::Any)) : KemalJsonApi::Resource::Data
+    {
+      type:       "articles",
+      id:         "1",
+      attributes: {
+        "title" => JSON::Any.new("JSON API paints my bikeshed!"),
       },
-      "relationships": {
-        "author": {
-          "links": {
-            "related": "http://example.com/articles/1/author",
+      relationships: {
+        "author" => JSON.parse({
+          "links" => {
+            "related" => "http://example.com/articles/1/author",
           },
-        },
+        }.to_json),
       },
-    }.to_json).as_h
+    }
   end
 
   def delete(id : Int | String) : Bool | Nil
     true
   end
 
-  def list : Array(JSON::Type)
-    JSON.parse([{
-      "type":       "articles",
-      "id":         "1",
-      "attributes": {
-        "title": "JSON API paints my bikeshed!",
+  def list : Array(KemalJsonApi::Resource::Data)
+    [{
+      type:       "articles",
+      id:         "1",
+      attributes: {
+        "title" => JSON::Any.new("JSON API paints my bikeshed!"),
       },
-    }, {
-      "type":       "articles",
-      "id":         "2",
-      "attributes": {
-        "title": "Rails is Omakase",
+      relationships: {
+        "author" => JSON.parse({
+          "links" => {
+            "related" => "http://example.com/articles/1/author",
+          },
+        }.to_json),
       },
-    }].to_json).as_a
+    },
+     {
+       type:       "articles",
+       id:         "2",
+       attributes: {
+         "title" => JSON::Any.new("Rails is Omakase"),
+       },
+       relationships: {} of String => JSON::Any,
+     }] of KemalJsonApi::Resource::Data | Nil
+  end
+
+  def read_relation_identifier(id : Int | String, relation : String) : Identifier | Nil
+    nil
+  end
+
+  def list_relation_identifiers(id : Int | String, relation : String) : Array(Identifier)
+    [] of KemalJsonApi::Resource::Identifier
+  end
+
+  def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : KemalJsonApi::Resource::Data
+    nil
+  end
+
+  def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(KemalJsonApi::Resource::Data)
+    [] of KemalJsonApi::Resource::Data
   end
 end

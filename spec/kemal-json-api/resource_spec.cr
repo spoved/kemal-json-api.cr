@@ -62,7 +62,7 @@ describe KemalJsonApi do
 
     describe "#create" do
       it "returns a String id on create" do
-        result = TestResource.new(adapter).create({"data" => "data"})
+        result = TestResource.new(adapter).create({"data" => JSON::Any.new("data")})
         result.should be_a(String)
         result.should eq "550e8400-e29b-41d4-a716-446655440000"
       end
@@ -71,15 +71,15 @@ describe KemalJsonApi do
     describe "#read" do
       it "returns a Hash on read" do
         result = TestResource.new(adapter).read("1")
-        result.should be_a Hash(String, JSON::Type)
+        result.should be_a KemalJsonApi::Resource::Data
       end
     end
 
     describe "#update" do
       it "returns a Hash on update" do
-        data = {"title" => "JSON API paints my bikeshed!"}
+        data = {"title" => JSON::Any.new("JSON API paints my bikeshed!")}
         result = TestResource.new(adapter).update("1", data)
-        result.should be_a Hash(String, JSON::Type)
+        result.should be_a KemalJsonApi::Resource::Data
       end
     end
 
@@ -93,7 +93,7 @@ describe KemalJsonApi do
     describe "#list" do
       it "returns a Hash on list" do
         result = TestResource.new(adapter).list
-        result.should be_a Array(JSON::Type)
+        result.should be_a Array(KemalJsonApi::Resource::Data)
       end
     end
   end

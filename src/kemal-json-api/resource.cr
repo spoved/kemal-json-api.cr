@@ -5,10 +5,18 @@ require "./relation"
 require "./resource/identifier"
 
 module KemalJsonApi
+  # alias KemalJsonApi::Resource::Data = NamedTuple( type: String, id: String, attributes: JSON::Any::Type, relationships: JSON::Any::Type ) | Nil
+
   # Abstract class to represent a JSON API resource object
   # See http://jsonapi.org/format/#document-resource-objects for proper format
   #  of the returns
   abstract class Resource
+    alias Data = NamedTuple(
+      type: String,
+      id: String,
+      attributes: Hash(String, JSON::Any),
+      relationships: Hash(String, JSON::Any)) | Nil
+
     @actions = [] of Action
     @singular : String
     @plural : String
@@ -102,9 +110,9 @@ module KemalJsonApi
     # ```
     # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"
     # ```
-    abstract def create(data : JSON::Type) : String | Nil
+    abstract def create(data : Hash(String, JSON::Any)) : String | Nil
 
-    # Should return a `Hash(String, JSON::Type)` object that contains the
+    # Should return a `Hash(String, JSON::Any::Type)` object that contains the
     #  record the id provided
     #
     # ```
@@ -123,7 +131,7 @@ module KemalJsonApi
     #   },
     # }
     # ```
-    abstract def read(id : Int | String) : JSON::Type | Nil
+    abstract def read(id : Int | String) : KemalJsonApi::Resource::Data
 
     # Should return an updated `Hash(String, JSON::Type)` object that contains the
     #  record and id that was updated
@@ -144,7 +152,7 @@ module KemalJsonApi
     #   },
     # }
     # ```
-    abstract def update(id : Int | String, args : JSON::Type) : JSON::Type | Nil
+    abstract def update(id : Int | String, args : Hash(String, JSON::Any)) : KemalJsonApi::Resource::Data
 
     # Will return true/false indicating if the record was deleted
     #
@@ -170,7 +178,7 @@ module KemalJsonApi
     #   },
     # }]
     # ```
-    abstract def list : Array(JSON::Type)
+    abstract def list : Array(KemalJsonApi::Resource::Data)
 
     #####################
     # Relation functions
@@ -207,15 +215,15 @@ module KemalJsonApi
     abstract def list_relation_identifiers(id : Int | String, relation : String) : Array(Identifier)
 
     # TODO: Complete this
-    abstract def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : JSON::Type | Nil
+    abstract def read_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : KemalJsonApi::Resource::Data
 
     # TODO: Complete this
-    abstract def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(JSON::Type)
+    abstract def list_relation_object(env : HTTP::Server::Context, path_info : PathInfo) : Array(KemalJsonApi::Resource::Data)
 
     # Will parse the paramaters provided in the `HTTP::Server::Context#request`
-    def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Type)
+    def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Any)
       begin
-        data = Hash(String, JSON::Type).new
+        data = Hash(String, JSON::Any).new
         body = env.request.body
 
         if body
@@ -226,7 +234,7 @@ module KemalJsonApi
         end
         data
       rescue ex
-        Hash(String, JSON::Type).new
+        Hash(String, JSON::Any).new
       end
     end
 
@@ -247,10 +255,10 @@ module KemalJsonApi
 
     # Will generate the relationship object for the provided id and relation
     # http://jsonapi.org/format/#document-resource-object-relationships
-    private def gen_relation_object(id : String, relation : KemalJsonApi::Relation) : JSON::Type
-      JSON.parse({
-        "self" => "/#{base_path}/#{id}/relationships/#{relation.name}",
-      }.to_json).as_h
+    private def gen_relation_object(id : String, relation : KemalJsonApi::Relation) : Hash(String, JSON::Any)
+      {
+        "self" => JSON::Any.new("/#{base_path}/#{id}/relationships/#{relation.name}"),
+      }
     end
   end
 end
