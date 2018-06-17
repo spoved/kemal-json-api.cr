@@ -10,7 +10,7 @@ dependencies:
     branch: master
   mongo:
     github: kalinon/mongo.cr
-    branch: master
+    version: 0.1.1
 development_dependencies:
   spec-kemal:
     github: kemalcr/spec-kemal
