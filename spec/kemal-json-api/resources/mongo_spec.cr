@@ -29,9 +29,9 @@ describe KemalJsonApi do
 
       describe "#create" do
         it "returns a String id on create" do
-          result = mongo_resource_character.create({
-            "id" => JSON::Any.new("5a7f723025ae0bfae26b43d3"),
-            "name" => JSON::Any.new("Morty")
+          result = mongo_resource_character.create(Hash(String, JSON::Any){
+            "id"   => JSON::Any.new("5a7f723025ae0bfae26b43d3"),
+            "name" => JSON::Any.new("Morty"),
           })
           result.should be_a(String)
           result.should eq "5a7f723025ae0bfae26b43d3"
@@ -50,10 +50,16 @@ describe KemalJsonApi do
         it "returns a Bool on update" do
           data = {"name" => JSON::Any.new("James Bonadale")}
           result = mongo_resource_character.update("5a7f723025ae0bfae26b43d1", data)
-          result.should be_true
+          result.should be_a KemalJsonApi::Resource::Data
 
           char = mongo_resource_character.read("5a7f723025ae0bfae26b43d1")
           char.should_not be_nil
+          if char
+            char[:id].should eq("5a7f723025ae0bfae26b43d1")
+          else
+            # fail
+            false.should be_true
+          end
         end
       end
 

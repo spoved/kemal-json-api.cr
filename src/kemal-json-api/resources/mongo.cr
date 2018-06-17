@@ -11,12 +11,14 @@ module KemalJsonApi
       ret = nil
       adapter.with_collection(collection) do |coll|
         doc = data.to_bson
+
         if doc.has_key?("id")
           doc["_id"] = BSON::ObjectId.new(doc["id"].to_s)
           doc["id"] = nil
         else
           doc["_id"] = BSON::ObjectId.new
         end
+
         coll.insert(doc)
         if (err = coll.last_error)
           return doc["_id"].to_s.chomp('\u0000')
