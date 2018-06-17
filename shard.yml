@@ -9,7 +9,7 @@ dependencies:
     github: kemalcr/kemal
     branch: master
   mongo:
-    github: sam0x17/mongo.cr
+    github: kalinon/mongo.cr
     branch: master
 development_dependencies:
   spec-kemal:
