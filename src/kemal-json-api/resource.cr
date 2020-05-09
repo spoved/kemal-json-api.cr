@@ -41,8 +41,10 @@ module KemalJsonApi
 
     getter :actions, :singular, :prefix, :plural, :adapter, :relations
 
-    def self.model
-      KemalJsonApi::Router.resource(self)
+    macro inherited
+      def self.model : {{@type.name.id}}
+        KemalJsonApi::Router.resource({{@type.name.id}}).not_nil!.as({{@type.name.id}})
+      end
     end
 
     # Returns the singular name of the resource
@@ -66,22 +68,22 @@ module KemalJsonApi
     # Returns the prefix string of the resource
     #
     # ```
-    # resource.prefix # => "model_"
+    # resource.prefix # => "model"
     # ```
     def prefix : String
       @prefix
     end
 
     # Returns the collection name. Which is made up of prefix string and the
-    #  singular name of the resource
+    #  singular name of the resource appended by a `_`
     #
     # ```
-    # resource.prefix     # => "model_"
+    # resource.prefix     # => "model"
     # resource.singular   # => "trait"
     # resource.collection # => "model_trait"
     # ```
     def collection : String
-      "#{@prefix}#{@singular}"
+      "#{@prefix}_#{@singular}"
     end
 
     # Returns `String` of the resource base path, which equals the plural of the
@@ -238,6 +240,7 @@ module KemalJsonApi
       end
       data
     rescue ex
+      Log.error(exception: ex) { }
       Hash(String, JSON::Any).new
     end
 

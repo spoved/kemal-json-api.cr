@@ -119,6 +119,7 @@ module KemalJsonApi
             data: ret,
           }.to_json
         else
+          Log.error { "failed to read resource" }
           error env, 404
         end
       end

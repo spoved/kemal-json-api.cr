@@ -4,6 +4,20 @@ require "../adapters/mongo"
 
 module KemalJsonApi
   class Resource::Mongo < KemalJsonApi::Resource
+    def initialize_collection(index, options)
+      adapter.with_database do |db|
+        unless db.has_collection?(collection)
+          Log.info { "No mongo collection named #{collection} found. Initializing" }
+          db.create_collection(collection)
+          unless (index.nil?)
+            adapter.with_collection(collection) do |coll|
+              coll.create_index(index, options)
+            end
+          end
+        end
+      end
+    end
+
     # Should return a `String` contianing the id of the record created
     #
     # ```
