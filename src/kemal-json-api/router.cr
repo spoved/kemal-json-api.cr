@@ -1,8 +1,11 @@
 require "kemal"
 require "./router/*"
+require "log"
 
 module KemalJsonApi
   module Router
+    Log = ::Log.for(self)
+
     extend Relations
     extend Resources
     extend self
@@ -18,6 +21,10 @@ module KemalJsonApi
       path: String,
       block: Proc(HTTP::Server::Context, PathInfo, String),
       action: KemalJsonApi::Action)
+
+    def self.resource(kind : KemalJsonApi::Resource.class)
+      @@resources.find { |r| r.class == kind }
+    end
 
     # Will append the resource to the router list
     def add(resource : KemalJsonApi::Resource)
@@ -59,6 +66,7 @@ module KemalJsonApi
 
     private macro register_route(action)
       handler.add_only(path_info[:path], {{action}})
+      Log.info { "Registering route: {{action.id}} #{path_info[:path]}" }
       {{action.id.downcase}} path_info[:path] do |env|
         begin
           path_info[:block].call env, path_info

@@ -41,6 +41,10 @@ module KemalJsonApi
 
     getter :actions, :singular, :prefix, :plural, :adapter, :relations
 
+    def self.model
+      KemalJsonApi::Router.resource(self)
+    end
+
     # Returns the singular name of the resource
     #
     # ```
@@ -223,20 +227,18 @@ module KemalJsonApi
 
     # Will parse the paramaters provided in the `HTTP::Server::Context#request`
     def prepare_params(env : HTTP::Server::Context) : Hash(String, JSON::Any)
-      begin
-        data = Hash(String, JSON::Any).new
-        body = env.request.body
+      data = Hash(String, JSON::Any).new
+      body = env.request.body
 
-        if body
-          string = body.gets_to_end
-          data = JSON.parse(string).as_h
-        else
-          # TODO: Render error
-        end
-        data
-      rescue ex
-        Hash(String, JSON::Any).new
+      if body
+        string = body.gets_to_end
+        data = JSON.parse(string).as_h
+      else
+        # TODO: Render error
       end
+      data
+    rescue ex
+      Hash(String, JSON::Any).new
     end
 
     # Will set up action associations for the resource

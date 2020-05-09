@@ -100,6 +100,7 @@ module KemalJsonApi
           return false
         end
       end
+      false
     end
 
     # Will return an array of JSON API resource objects

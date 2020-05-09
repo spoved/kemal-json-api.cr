@@ -1,5 +1,3 @@
-require "../adapter"
-
 class SpecAdapter::Mongo < KemalJsonApi::Adapter::Mongo
   # Returns the mongodb instance host or ip
   property host : String = "localhost"

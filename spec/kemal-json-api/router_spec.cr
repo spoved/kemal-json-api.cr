@@ -20,9 +20,20 @@ describe KemalJsonApi do
       describe "#add" do
         it "can add new resource" do
           KemalJsonApi::Router.resources.empty?.should be_true
-          KemalJsonApi::Router.add TestResource.new(adapter)
+          resource = TestResource.new(adapter)
+          KemalJsonApi::Router.add resource
           KemalJsonApi::Router.resources.empty?.should be_false
         end
+      end
+
+      it "can fetch resource by type" do
+        KemalJsonApi::Router.resources.empty?.should be_true
+        resource = TestResource.new(adapter)
+        KemalJsonApi::Router.add resource
+        KemalJsonApi::Router.resources.empty?.should be_false
+
+        KemalJsonApi::Router.resource(TestResource).should be resource
+        TestResource.model.should be resource
       end
     end
 
