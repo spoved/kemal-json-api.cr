@@ -27,7 +27,7 @@ module KemalJsonApi
 
     alias ActionsList = Hash(ActionMethod, ActionType)
 
-    def initialize(@adapter : KemalJsonApi::Adapter, *args,
+    def initialize(@adapter : KemalJsonApi::Adapter,
                    actions : ActionsList = ALL_ACTIONS,
                    plural : String = "",
                    prefix : String = "",
