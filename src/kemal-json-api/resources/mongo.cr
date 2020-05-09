@@ -10,10 +10,12 @@ module KemalJsonApi
     # model.create({"data" => "data"}) # => "550e8400-e29b-41d4-a716-446655440000"
     # ```
     def create(data : Hash(String, JSON::Any)) : String | Nil
+      create(data.to_bson)
+    end
+
+    def create(doc : BSON) : String | Nil
       ret = nil
       adapter.with_collection(collection) do |coll|
-        doc = data.to_bson
-
         if doc.has_key?("id")
           doc["_id"] = BSON::ObjectId.new(doc["id"].to_s)
           doc["id"] = nil
