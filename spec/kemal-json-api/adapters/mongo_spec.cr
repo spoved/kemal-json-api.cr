@@ -5,7 +5,7 @@ describe KemalJsonApi do
     describe KemalJsonApi::Adapter::Mongo do
       describe "#new" do
         it "initializes with values" do
-          mongo = KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
+          mongo = SpecAdapter::Mongo.new("localhost", 27017, "test")
           mongo.should be_a(KemalJsonApi::Adapter::Mongo)
           mongo.host.should eq "localhost"
           mongo.port.should eq 27017
@@ -15,28 +15,28 @@ describe KemalJsonApi do
 
       describe "#get_client" do
         it "is a Mongo::Client" do
-          mongo = KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
+          mongo = SpecAdapter::Mongo.new("localhost", 27017, "test")
           mongo.get_client.should be_a(Mongo::Client)
         end
       end
 
-      describe "#get_database" do
+      describe "#database" do
         it "is a Mongo::Client" do
-          mongo = KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
-          mongo.get_database("test").should be_a(Mongo::Database)
+          mongo = SpecAdapter::Mongo.new("localhost", 27017, "test")
+          mongo.database("test").should be_a(Mongo::Database)
         end
       end
 
-      describe "#get_collection" do
+      describe "#collection" do
         it "is a Mongo::Client" do
-          mongo = KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
-          mongo.get_collection("people").should be_a(Mongo::Collection)
+          mongo = SpecAdapter::Mongo.new("localhost", 27017, "test")
+          mongo.collection("people").should be_a(Mongo::Collection)
         end
       end
 
       describe "#uri" do
         it "builds correct uri" do
-          mongo = KemalJsonApi::Adapter::Mongo.new("testhost", 27017, "test")
+          mongo = SpecAdapter::Mongo.new("testhost", 27017, "test")
           mongo.uri.should eq "mongodb://testhost:27017/test"
         end
       end

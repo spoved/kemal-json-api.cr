@@ -1,5 +1,51 @@
-def adapter : KemalJsonApi::Adapter::Mongo
-  KemalJsonApi::Adapter::Mongo.new("localhost", 27017, "test")
+require "../adapter"
+
+class SpecAdapter::Mongo < KemalJsonApi::Adapter::Mongo
+  # Returns the mongodb instance host or ip
+  property host : String = "localhost"
+  # Returns the mongodb instance port
+  property port : Int32 = 27017
+
+  def initialize(@host : String, @port : Int32, @database_name : String)
+  end
+
+  # Returns the mongo client
+  def get_client : ::Mongo::Client
+    ::Mongo::Client.new(self.uri)
+  end
+
+  # Returns the requested database
+  def database(database : String) : ::Mongo::Database
+    client = get_client
+    client[database]
+  end
+
+  # Returns the requested collection
+  def collection(collection : String, db : ::Mongo::Database? = nil) : ::Mongo::Collection
+    db = database(self.database_name) if db.nil?
+    db[collection]
+  end
+
+  # Returns the mongodb connection URI
+  def uri : String
+    "mongodb://#{host}:#{port}/#{database_name}"
+  end
+
+  def with_database(&block : ::Mongo::Database -> Nil) : Nil
+    db = database(self.database_name)
+    yield db
+  end
+
+  def with_collection(collection : String, &block : ::Mongo::Collection -> Nil) : Nil
+    with_database do |db|
+      col = self.collection(collection, db)
+      yield col
+    end
+  end
+end
+
+def adapter : SpecAdapter::Mongo
+  SpecAdapter::Mongo.new("localhost", 27017, "test")
 end
 
 def mongo_resource_character : KemalJsonApi::Resource::Mongo

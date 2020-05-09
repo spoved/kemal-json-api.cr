@@ -1,4 +1,6 @@
+require "mongo"
 require "../resource"
+require "../adapters/mongo"
 
 module KemalJsonApi
   class Resource::Mongo < KemalJsonApi::Resource

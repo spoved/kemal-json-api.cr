@@ -2,53 +2,18 @@ require "../adapter"
 require "mongo"
 
 module KemalJsonApi
-  class Adapter::Mongo < KemalJsonApi::Adapter
-    # Returns the mongodb instance host or ip
-    property host : String = "localhost"
-    # Returns the mongodb instance port
-    property port : Int32 = 27017
-    # Returns the name of the configured database for this adapter instance
-    property! database_name : String
-
-    def initialize(@host : String, @port : Int32, @database_name : String)
-    end
-
-    # Returns the mongo client
-    def get_client : ::Mongo::Client
-      ::Mongo::Client.new(self.uri)
-    end
-
+  abstract class Adapter::Mongo < KemalJsonApi::Adapter
     # Returns the requested database
-    def get_database(database : String) : ::Mongo::Database
-      client = get_client
-      client[database]
-    end
+    abstract def database(database : String) : ::Mongo::Database
 
     # Returns the requested collection
-    def get_collection(collection : String, db : ::Mongo::Database? = nil) : ::Mongo::Collection
-      db = get_database(self.database_name) if db.nil?
-      db[collection]
-    end
+    abstract def collection(collection : String, db : ::Mongo::Database? = nil) : ::Mongo::Collection
 
     # Returns the mongodb connection URI
-    def uri : String
-      "mongodb://#{host}:#{port}/#{database_name}"
-    end
+    abstract def uri : String
 
-    def with_database
-      db = get_database(self.database_name)
-      begin
-        yield db
-      ensure
-        # db.drop
-      end
-    end
+    abstract def with_database(&block : ::Mongo::Database -> Nil) : Nil
 
-    def with_collection(collection : String)
-      with_database do |db|
-        col = self.get_collection(collection, db)
-        yield col
-      end
-    end
+    abstract def with_collection(collection : String, &block : ::Mongo::Collection -> Nil) : Nil
   end
 end
