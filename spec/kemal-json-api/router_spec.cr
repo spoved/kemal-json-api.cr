@@ -17,7 +17,7 @@ describe KemalJsonApi do
         end
       end
 
-      describe ".add" do
+      describe "#add" do
         it "can add new resource" do
           KemalJsonApi::Router.resources.empty?.should be_true
           KemalJsonApi::Router.add TestResource.new(adapter)
@@ -27,7 +27,7 @@ describe KemalJsonApi do
     end
 
     context "with resources" do
-      describe ".generate_routes!" do
+      describe "#generate_routes!" do
         it "can generate routes" do
           KemalJsonApi::Router.resources.empty?.should be_true
           json_api_resource "character", adapter

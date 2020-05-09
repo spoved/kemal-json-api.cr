@@ -1,10 +1,10 @@
+ENV["KEMAL_ENV"] = "test" unless ENV["KEMAL_ENV"]?
+
 require "spec"
 require "json"
 require "spec-kemal"
 require "../src/kemal-json-api"
 require "./factories"
-
-ENV["KEMAL_ENV"] = "test"
 
 def clear_resources
   KemalJsonApi::Router.resources = Array(KemalJsonApi::Resource).new

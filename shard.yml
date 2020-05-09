@@ -10,11 +10,11 @@ dependencies:
     branch: master
   mongo:
     github: kalinon/mongo.cr
-    version: 0.1.1
+    branch: master
 development_dependencies:
   spec-kemal:
     github: kemalcr/spec-kemal
 
-crystal: 0.25.0
+crystal: 0.34.0
 
 license: MIT

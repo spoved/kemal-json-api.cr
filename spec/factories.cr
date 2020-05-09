@@ -112,7 +112,7 @@ class TestResource < KemalJsonApi::Resource
     }
   end
 
-  def delete(id : Int | String) : Bool | Nil
+  def delete(id : Int | String) : Bool
     true
   end
 
@@ -131,14 +131,14 @@ class TestResource < KemalJsonApi::Resource
         }.to_json),
       },
     },
-     {
-       type:       "articles",
-       id:         "2",
-       attributes: {
-         "title" => JSON::Any.new("Rails is Omakase"),
-       },
-       relationships: {} of String => JSON::Any,
-     }] of KemalJsonApi::Resource::Data | Nil
+    {
+      type:       "articles",
+      id:         "2",
+      attributes: {
+        "title" => JSON::Any.new("Rails is Omakase"),
+      },
+      relationships: {} of String => JSON::Any,
+    }] of KemalJsonApi::Resource::Data | Nil
   end
 
   def read_relation_identifier(id : Int | String, relation : String) : Identifier | Nil

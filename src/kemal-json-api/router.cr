@@ -57,54 +57,32 @@ module KemalJsonApi
       nil
     end
 
+    private macro register_route(action)
+      handler.add_only(path_info[:path], {{action}})
+      {{action.id.downcase}} path_info[:path] do |env|
+        begin
+          path_info[:block].call env, path_info
+        rescue ex : Exception
+          error env, 0, ex.message.to_s
+        end
+      end
+    end
+
     # Will create kemal route based on the `PathInfo`
     private def create_route(path_info : PathInfo)
       case path_info[:action].type
       when ActionType::GET
-        handler.add_only(path_info[:path], "GET")
-        get "#{path_info[:path]}" do |env|
-          begin
-            path_info[:block].call env, path_info
-          rescue ex : Exception
-            error env, 0, ex.message.to_s
-          end
-        end
+        register_route("GET")
       when ActionType::POST
-        handler.add_only(path_info[:path], "POST")
-        post "#{path_info[:path]}" do |env|
-          begin
-            path_info[:block].call env, path_info
-          rescue ex : Exception
-            error env, 0, ex.message.to_s
-          end
-        end
+        register_route("POST")
       when ActionType::PUT
-        handler.add_only(path_info[:path], "PUT")
-        put "#{path_info[:path]}" do |env|
-          begin
-            path_info[:block].call env, path_info
-          rescue ex : Exception
-            error env, 0, ex.message.to_s
-          end
-        end
+        register_route("PUT")
       when ActionType::PATCH
-        handler.add_only(path_info[:path], "PATCH")
-        patch "#{path_info[:path]}" do |env|
-          begin
-            path_info[:block].call env, path_info
-          rescue ex : Exception
-            error env, 0, ex.message.to_s
-          end
-        end
+        register_route("PATCH")
       when ActionType::DELETE
-        handler.add_only(path_info[:path], "DELETE")
-        delete "#{path_info[:path]}" do |env|
-          begin
-            path_info[:block].call env, path_info
-          rescue ex : Exception
-            error env, 0, ex.message.to_s
-          end
-        end
+        register_route("DELETE")
+      else
+        raise "Unknown action type: #{path_info[:action].type}"
       end
       puts "#{path_info[:action].type} #{path_info[:path]}" if DEBUG
     end
