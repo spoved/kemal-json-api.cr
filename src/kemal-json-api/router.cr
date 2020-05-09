@@ -12,6 +12,7 @@ module KemalJsonApi
 
     @@resources = [] of KemalJsonApi::Resource
     @@handler = KemalJsonApi::Handler.new
+    class_property api_path = ""
     class_property :resources
     class_getter :handler
 

@@ -8,35 +8,35 @@ module KemalJsonApi
         when ActionMethod::CREATE
           {
             resource: resource,
-            path:     "/#{resource.base_path}",
+            path:     "#{Router.api_path}/#{resource.base_path}",
             block:    ->create_resource(HTTP::Server::Context, PathInfo),
             action:   action,
           }
         when ActionMethod::READ
           {
             resource: resource,
-            path:     "/#{resource.base_path}/:id",
+            path:     "#{Router.api_path}/#{resource.base_path}/:id",
             block:    ->read_resource(HTTP::Server::Context, PathInfo),
             action:   action,
           }
         when ActionMethod::UPDATE
           {
             resource: resource,
-            path:     "/#{resource.base_path}/:id",
+            path:     "#{Router.api_path}/#{resource.base_path}/:id",
             block:    ->update_resource(HTTP::Server::Context, PathInfo),
             action:   action,
           }
         when ActionMethod::DELETE
           {
             resource: resource,
-            path:     "/#{resource.base_path}/:id",
+            path:     "#{Router.api_path}/#{resource.base_path}/:id",
             block:    ->delete_resource(HTTP::Server::Context, PathInfo),
             action:   action,
           }
         when ActionMethod::LIST
           {
             resource: resource,
-            path:     "/#{resource.base_path}",
+            path:     "#{Router.api_path}/#{resource.base_path}",
             block:    ->list_resource(HTTP::Server::Context, PathInfo),
             action:   action,
           }

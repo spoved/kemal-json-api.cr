@@ -75,15 +75,15 @@ module KemalJsonApi
     end
 
     # Returns the collection name. Which is made up of prefix string and the
-    #  singular name of the resource appended by a `_`
+    #  singular name of the resource
     #
     # ```
-    # resource.prefix     # => "model"
+    # resource.prefix     # => "model_"
     # resource.singular   # => "trait"
     # resource.collection # => "model_trait"
     # ```
     def collection : String
-      "#{@prefix}_#{@singular}"
+      "#{@prefix}#{@singular}"
     end
 
     # Returns `String` of the resource base path, which equals the plural of the
