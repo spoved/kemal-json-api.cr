@@ -18,7 +18,7 @@ dependencies:
 
 ## Usage
 
-```ruby
+```crystal
 require "mongo"
 require "kemal"
 require "kemal-json-api"
@@ -38,7 +38,7 @@ end
 
 Generated routes:
 
-```text
+```crystal
 GET    /api/items
 GET    /api/items/:id
 POST   /api/items
@@ -50,7 +50,7 @@ DELETE /api/items/:id
 
 kemal-json-api also has a macro that can be used to shortcut creating routes
 
-```ruby
+```crystal
 require "mongo"
 require "kemal"
 require "../src/kemal-json-api/macros/router"
