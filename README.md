@@ -38,7 +38,7 @@ end
 
 Generated routes:
 
-```
+```text
 GET    /api/items
 GET    /api/items/:id
 POST   /api/items
@@ -47,6 +47,7 @@ DELETE /api/items/:id
 ```
 
 ## Macro
+
 kemal-json-api also has a macro that can be used to shortcut creating routes
 
 ```ruby
