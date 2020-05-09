@@ -10,21 +10,21 @@ module KemalJsonApi
         when ActionMethod::READ
           {
             resource: resource,
-            path:     "/#{resource.base_path}/:id/relationships/#{relation.name}",
+            path:     "#{Router.api_path}/#{resource.base_path}/:id/relationships/#{relation.name}",
             block:    ->read_relation_identifier(HTTP::Server::Context, PathInfo),
             action:   action,
           }
         when ActionMethod::LIST
           {
             resource: resource,
-            path:     "/#{resource.base_path}/:id/relationships/#{relation.name}",
+            path:     "#{Router.api_path}/#{resource.base_path}/:id/relationships/#{relation.name}",
             block:    ->list_relation_identifiers(HTTP::Server::Context, PathInfo),
             action:   action,
           }
         else
           {
             resource: resource,
-            path:     "/#{resource.base_path}/:id/relationships/#{relation.name}",
+            path:     "#{Router.api_path}/#{resource.base_path}/:id/relationships/#{relation.name}",
             block:    ->(env : HTTP::Server::Context, path_info : PathInfo) { "" },
             action:   action,
           }

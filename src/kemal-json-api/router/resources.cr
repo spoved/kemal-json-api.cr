@@ -66,7 +66,7 @@ module KemalJsonApi
           env.response.status_code = 200
           {
             links: {
-              self: "/#{path_info[:resource].plural}/#{id}",
+              self: "#{Router.api_path}/#{path_info[:resource].plural}/#{id}",
             },
             data: path_info[:resource].read(id),
           }.to_json
@@ -98,7 +98,7 @@ module KemalJsonApi
         env.response.headers["Connection"] = "close"
         {
           links: {
-            self: "/#{path_info[:resource].plural}",
+            self: "#{Router.api_path}/#{path_info[:resource].plural}",
           },
           data: ret,
         }.to_json
@@ -114,7 +114,7 @@ module KemalJsonApi
           env.response.headers["Connection"] = "close"
           {
             links: {
-              self: "/#{path_info[:resource].plural}/#{id}",
+              self: "#{Router.api_path}/#{path_info[:resource].plural}/#{id}",
             },
             data: ret,
           }.to_json
@@ -139,7 +139,7 @@ module KemalJsonApi
           env.response.status_code = 201
           {
             links: {
-              self: "/#{path_info[:resource].plural}/#{id}",
+              self: "#{Router.api_path}/#{path_info[:resource].plural}/#{id}",
             },
             data: path_info[:resource].read(id),
           }.to_json
