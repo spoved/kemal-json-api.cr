@@ -25,8 +25,8 @@ module KemalJsonApi
     end
 
     # Returns the requested collection
-    def get_collection(collection : String) : ::Mongo::Collection
-      db = get_database(self.database_name)
+    def get_collection(collection : String, db : ::Mongo::Database? = nil) : ::Mongo::Collection
+      db = get_database(self.database_name) if db.nil?
       db[collection]
     end
 
@@ -46,7 +46,7 @@ module KemalJsonApi
 
     def with_collection(collection : String)
       with_database do |db|
-        col = self.get_collection(collection)
+        col = self.get_collection(collection, db)
         yield col
       end
     end

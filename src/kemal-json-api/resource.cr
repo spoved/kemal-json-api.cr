@@ -3,6 +3,7 @@ require "./action"
 require "./adapter"
 require "./relation"
 require "./resource/identifier"
+require "json"
 
 module KemalJsonApi
   # alias KemalJsonApi::Resource::Data = NamedTuple( type: String, id: String, attributes: JSON::Any::Type, relationships: JSON::Any::Type ) | Nil
